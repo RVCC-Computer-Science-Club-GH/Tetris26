@@ -8,7 +8,7 @@ Run using `python3 -m http.server -d public`
 - S Piece (Green): #00FF00
 - Z Piece (Red): #FF0000
 - J Piece (Blue): #0000FF
-- L Piece (Orange): #FF7F00 \
+- L Piece (Orange): #FF7F00 
 
 
 [Tetris Guideline](https://tetris.wiki/Tetris_Guideline)
