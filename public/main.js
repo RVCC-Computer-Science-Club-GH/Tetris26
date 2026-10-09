@@ -80,10 +80,10 @@ gl.enableVertexAttribArray(positionLocation);
 // UV buffer
 const uvSize = 2;
 const uvs = new Float32Array([
-  1, 1,
   1, 0,
-  0, 1,
+  1, 1,
   0, 0,
+  0, 1,
 ]);
 const uvBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
@@ -101,7 +101,6 @@ gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
 const tileUnit = 0;
 gl.uniform1i(tileLocation, tileUnit);
 const tileSampler = gl.createSampler();
-gl.samplerParameteri(tileSampler, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 gl.bindSampler(tileUnit, tileSampler);
 const tileTexture = gl.createTexture();
 gl.activeTexture(gl.TEXTURE0 + tileUnit);
