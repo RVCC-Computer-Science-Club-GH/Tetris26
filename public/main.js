@@ -15,16 +15,6 @@ if (gl === null) {
 // Background color
 gl.clearColor(0.4, 0.3, 0.3, 1.0);
 
-// Resize canvas to fit page
-let pixelRatio;
-window.addEventListener("resize", (event) => {
-  pixelRatio = event.target.devicePixelRatio;
-  canvas.width = pixelRatio * event.target.innerWidth;
-  canvas.height = pixelRatio * event.target.innerHeight;
-  gl.viewport(0, 0, canvas.width, canvas.height);
-});
-window.dispatchEvent(new Event("resize"));
-
 // Shader compilation
 async function loadShader(type, url) {
   const source = await (await fetch(url)).text();
@@ -48,6 +38,22 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
   throw new AlertError(`Failed to link shaders: ${gl.getProgramInfoLog(program)}`);
 }
 gl.useProgram(program);
+
+// Uniforms
+const scaleLocation = gl.getUniformLocation(program, "scale");
+const tileLocation = gl.getUniformLocation(program, "tile");
+
+// Resize canvas to fit page
+let pixelRatio;
+window.addEventListener("resize", (event) => {
+  pixelRatio = event.target.devicePixelRatio;
+  canvas.width = pixelRatio * event.target.innerWidth;
+  canvas.height = pixelRatio * event.target.innerHeight;
+  const minDimension = Math.min(canvas.width, canvas.height);
+  gl.viewport(0, 0, canvas.width, canvas.height);
+  gl.uniform2f(scaleLocation, minDimension / canvas.width, minDimension / canvas.height);
+});
+window.dispatchEvent(new Event("resize"));
 
 // Vertex array
 const vertexArray = gl.createVertexArray();
@@ -104,9 +110,6 @@ const indexBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
 
-// Uniforms
-const tileLocation = gl.getUniformLocation(program, "tile");
-
 // Create tile texture sampler
 const tileUnit = 0;
 gl.uniform1i(tileLocation, tileUnit);
@@ -118,7 +121,7 @@ gl.activeTexture(gl.TEXTURE0 + tileUnit);
 gl.bindTexture(gl.TEXTURE_2D, tileTexture);
 
 // Load tile texture
-let tileImage = new Image();
+const tileImage = new Image();
 tileImage.src = "tile.png";
 tileImage.addEventListener("load", () => {
   gl.bindTexture(gl.TEXTURE_2D, tileTexture);
