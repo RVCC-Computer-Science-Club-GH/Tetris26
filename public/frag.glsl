@@ -2,13 +2,13 @@
 
 precision highp float;
 
-in vec3 color;
 in vec2 uv;
 
-out vec4 outColor;
+out vec4 colorOut;
 
 uniform sampler2D tile;
+uniform vec3 color;
 
 void main() {
-    outColor = vec4(color, 1.0) * texture(tile, uv);
+    colorOut = vec4(color, 1) * texture(tile, uv);
 }

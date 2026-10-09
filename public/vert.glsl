@@ -4,15 +4,12 @@ precision highp float;
 
 uniform vec2 scale;
 
-layout(location = 0) in vec2 inPosition;
-layout(location = 1) in vec3 inColor;
-layout(location = 2) in vec2 inUv;
+in vec2 positionIn;
+in vec2 uvIn;
 
-out vec3 color;
 out vec2 uv;
 
 void main() {
-    color = inColor;
-    uv = inUv;
-    gl_Position = vec4(scale * inPosition, 0.0, 1.0);
+    uv = uvIn;
+    gl_Position = vec4(scale * positionIn, 0, 1);
 }

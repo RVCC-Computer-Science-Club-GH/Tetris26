@@ -39,19 +39,23 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
 }
 gl.useProgram(program);
 
-// Uniforms
+// Locations
 const scaleLocation = gl.getUniformLocation(program, "scale");
+const positionLocation = gl.getAttribLocation(program, "positionIn");
+const uvLocation = gl.getAttribLocation(program, "uvIn");
 const tileLocation = gl.getUniformLocation(program, "tile");
+const colorLocation = gl.getUniformLocation(program, "color");
 
 // Resize canvas to fit page
 let pixelRatio;
+const worldScale = 20;
 window.addEventListener("resize", (event) => {
   pixelRatio = event.target.devicePixelRatio;
   canvas.width = pixelRatio * event.target.innerWidth;
   canvas.height = pixelRatio * event.target.innerHeight;
   const minDimension = Math.min(canvas.width, canvas.height);
   gl.viewport(0, 0, canvas.width, canvas.height);
-  gl.uniform2f(scaleLocation, minDimension / canvas.width, minDimension / canvas.height);
+  gl.uniform2f(scaleLocation, minDimension / (worldScale * canvas.width), minDimension / (worldScale * canvas.height));
 });
 window.dispatchEvent(new Event("resize"));
 
@@ -60,49 +64,32 @@ const vertexArray = gl.createVertexArray();
 gl.bindVertexArray(vertexArray);
 
 // Position buffer
-const positionIndex = 0;
 const positionSize = 2;
 const positions = new Float32Array([
-  1.0, 1.0,
-  1.0, -1.0,
-  -1.0, 1.0,
-  -1.0, -1.0,
+  1, 1,
+  1, -1,
+  -1, 1,
+  -1, -1,
 ]);
 const positionBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-gl.vertexAttribPointer(positionIndex, positionSize, gl.FLOAT, false, 0, 0);
-gl.enableVertexAttribArray(positionIndex);
-
-// Color buffer
-const colorIndex = 1;
-const colorSize = 3;
-const colors = new Float32Array([
-  0.0, 1.0, 1.0,
-  1.0, 0.0, 1.0,
-  1.0, 1.0, 0.0,
-  0.0, 1.0, 0.0,
-]);
-const colorBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-gl.bufferData(gl.ARRAY_BUFFER, colors, gl.STATIC_DRAW);
-gl.vertexAttribPointer(colorIndex, colorSize, gl.FLOAT, false, 0, 0);
-gl.enableVertexAttribArray(colorIndex);
+gl.vertexAttribPointer(positionLocation, positionSize, gl.FLOAT, false, 0, 0);
+gl.enableVertexAttribArray(positionLocation);
 
 // UV buffer
-const uvIndex = 2;
 const uvSize = 2;
 const uvs = new Float32Array([
-  1.0, 1.0,
-  1.0, 0.0,
-  0.0, 1.0,
-  0.0, 0.0,
+  1, 1,
+  1, 0,
+  0, 1,
+  0, 0,
 ]);
 const uvBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, uvs, gl.STATIC_DRAW);
-gl.vertexAttribPointer(uvIndex, uvSize, gl.FLOAT, false, 0, 0);
-gl.enableVertexAttribArray(uvIndex);
+gl.vertexAttribPointer(uvLocation, uvSize, gl.FLOAT, false, 0, 0);
+gl.enableVertexAttribArray(uvLocation);
 
 // Index buffer
 const indices = new Uint32Array([0, 1, 2, 1, 2, 3]);
@@ -139,5 +126,6 @@ window.requestAnimationFrame(function loop(time) {
 
   // Clear screen and draw
   gl.clear(gl.COLOR_BUFFER_BIT);
+  gl.uniform3f(colorLocation, 1, 0, 0.8);
   gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, 0);
 });
