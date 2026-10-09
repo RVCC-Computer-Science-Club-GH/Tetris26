@@ -104,15 +104,27 @@ const indexBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
 
-// Texture
-const texture = gl.createTexture();
-gl.bindTexture(gl.TEXTURE_2D, texture);
-let image = new Image();
-image.src = "tile.png";
-image.addEventListener("load", () => {
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+// Uniforms
+const tileLocation = gl.getUniformLocation(program, "tile");
+
+// Create tile texture sampler
+const tileUnit = 0;
+gl.uniform1i(tileLocation, tileUnit);
+const tileSampler = gl.createSampler();
+gl.samplerParameteri(tileSampler, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+gl.bindSampler(tileUnit, tileSampler);
+const tileTexture = gl.createTexture();
+gl.activeTexture(gl.TEXTURE0 + tileUnit);
+gl.bindTexture(gl.TEXTURE_2D, tileTexture);
+
+// Load tile texture
+let tileImage = new Image();
+tileImage.src = "tile.png";
+tileImage.addEventListener("load", () => {
+  gl.bindTexture(gl.TEXTURE_2D, tileTexture);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, tileImage);
   gl.generateMipmap(gl.TEXTURE_2D);
-})
+});
 
 // Game loop
 window.requestAnimationFrame(function loop(time) {
