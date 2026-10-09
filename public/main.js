@@ -16,11 +16,11 @@ if (gl === null) {
 gl.clearColor(0.4, 0.3, 0.3, 1.0);
 
 // Resize canvas to fit page
-let pixel_ratio;
+let pixelRatio;
 window.addEventListener("resize", (event) => {
-  pixel_ratio = event.target.devicePixelRatio;
-  canvas.width = pixel_ratio * event.target.innerWidth;
-  canvas.height = pixel_ratio * event.target.innerHeight;
+  pixelRatio = event.target.devicePixelRatio;
+  canvas.width = pixelRatio * event.target.innerWidth;
+  canvas.height = pixelRatio * event.target.innerHeight;
   gl.viewport(0, 0, canvas.width, canvas.height);
 });
 window.dispatchEvent(new Event("resize"));
@@ -54,30 +54,65 @@ const vertexArray = gl.createVertexArray();
 gl.bindVertexArray(vertexArray);
 
 // Position buffer
-const position_index = 0;
+const positionIndex = 0;
+const positionSize = 2;
 const positions = new Float32Array([
+  1.0, 1.0,
   1.0, -1.0,
+  -1.0, 1.0,
   -1.0, -1.0,
-  0.0, 1.0
 ]);
 const positionBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-gl.vertexAttribPointer(position_index, 2, gl.FLOAT, false, 0, 0);
-gl.enableVertexAttribArray(position_index);
+gl.vertexAttribPointer(positionIndex, positionSize, gl.FLOAT, false, 0, 0);
+gl.enableVertexAttribArray(positionIndex);
 
 // Color buffer
-const color_index = 1;
+const colorIndex = 1;
+const colorSize = 3;
 const colors = new Float32Array([
-  0.0, 1.0, 1.0, 1.0,
-  1.0, 0.0, 1.0, 1.0,
-  1.0, 1.0, 0.0, 1.0
+  0.0, 1.0, 1.0,
+  1.0, 0.0, 1.0,
+  1.0, 1.0, 0.0,
+  0.0, 1.0, 0.0,
 ]);
 const colorBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, colors, gl.STATIC_DRAW);
-gl.vertexAttribPointer(color_index, 4, gl.FLOAT, false, 0, 0);
-gl.enableVertexAttribArray(color_index);
+gl.vertexAttribPointer(colorIndex, colorSize, gl.FLOAT, false, 0, 0);
+gl.enableVertexAttribArray(colorIndex);
+
+// UV buffer
+const uvIndex = 2;
+const uvSize = 2;
+const uvs = new Float32Array([
+  1.0, 1.0,
+  1.0, 0.0,
+  0.0, 1.0,
+  0.0, 0.0,
+]);
+const uvBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, uvs, gl.STATIC_DRAW);
+gl.vertexAttribPointer(uvIndex, uvSize, gl.FLOAT, false, 0, 0);
+gl.enableVertexAttribArray(uvIndex);
+
+// Index buffer
+const indices = new Uint32Array([0, 1, 2, 1, 2, 3]);
+const indexBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+
+// Texture
+const texture = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, texture);
+let image = new Image();
+image.src = "tile.png";
+image.addEventListener("load", () => {
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+  gl.generateMipmap(gl.TEXTURE_2D);
+})
 
 // Game loop
 window.requestAnimationFrame(function loop(time) {
@@ -89,5 +124,5 @@ window.requestAnimationFrame(function loop(time) {
 
   // Clear screen and draw
   gl.clear(gl.COLOR_BUFFER_BIT);
-  gl.drawArrays(gl.TRIANGLES, 0, 3);
+  gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, 0);
 });
