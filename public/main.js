@@ -6,6 +6,19 @@ class AlertError extends Error {
   }
 }
 
+// Colors
+const cyan = { r: 0x00 / 255, g: 0xFF / 255, b: 0xFF / 255 };
+const yellow = { r: 0xFF / 255, g: 0xFF / 255, b: 0x00 / 255 };
+const purple = { r: 0x80 / 255, g: 0x00 / 255, b: 0x80 / 255 };
+const green = { r: 0x00 / 255, g: 0xFF / 255, b: 0x00 / 255 };
+const red = { r: 0xFF / 255, g: 0x00 / 255, b: 0x00 / 255 };
+const blue = { r: 0x00 / 255, g: 0x00 / 255, b: 0xFF / 255 };
+const orange = { r: 0xFF / 255, g: 0x7F / 255, b: 0x00 / 255 };
+
+// Dimensions
+const worldWidth = 10;
+const worldHeight = 20;
+
 // WebGL context
 const gl = canvas.getContext("webgl2", { antialias: true });
 if (gl === null) {
@@ -47,7 +60,7 @@ const tileLocation = gl.getUniformLocation(program, "tile");
 const colorLocation = gl.getUniformLocation(program, "color");
 
 // Resize canvas to fit page
-const worldScale = 0.1;
+const worldScale = 2 / Math.max(worldWidth, worldHeight);
 window.addEventListener("resize", (event) => {
   const pixelRatio = event.target.devicePixelRatio;
   canvas.width = pixelRatio * event.target.innerWidth;
@@ -82,39 +95,33 @@ const indexBuffer = gl.createBuffer();
 // Populate buffers
 const positions = [];
 const uvs = [];
-const indices = [];
-let vertexCount = 0;
-
-for (let x = -5; x < 5; x++) {
-  for (let y = -10; y < 10; y++) {
+for (let y = -worldHeight / 2; y < worldHeight / 2; y++) {
+  for (let x = -worldWidth / 2; x < worldWidth / 2; x++) {
     // 0
     positions.push(x + 1, y + 1);
     uvs.push(1, 0);
-
     // 1
     positions.push(x + 1, y);
     uvs.push(1, 1);
-
     // 2
     positions.push(x, y + 1);
     uvs.push(0, 0);
-
     // 3
     positions.push(x, y);
     uvs.push(0, 1);
-
-    indices.push(vertexCount, vertexCount + 1, vertexCount + 2);
-    indices.push(vertexCount + 1, vertexCount + 2, vertexCount + 3);
-    vertexCount += 4;
   }
 }
-
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(uvs), gl.STATIC_DRAW);
-gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(indices), gl.DYNAMIC_DRAW);
+
+// Add the index of a tile at x and y
+function addTile(indices, x, y) {
+  const index = 4 * (y * worldWidth + x);
+  indices.push(index, index + 1, index + 2);
+  indices.push(index + 1, index + 2, index + 3);
+}
 
 // Tile texture
 const tileUnit = 0;
@@ -135,8 +142,29 @@ window.requestAnimationFrame(function loop(time) {
   // Time in seconds
   time *= 0.001;
 
-  // Clear screen and draw
+  // Clear screen
   gl.clear(gl.COLOR_BUFFER_BIT);
-  gl.uniform3f(colorLocation, 1, 0, 0.8);
+
+  // Draw call per color
+  gl.uniform3f(colorLocation, cyan.r, cyan.g, cyan.b);
+  let indices = [];
+  for (let y = 0; y < worldHeight; y++) {
+    for (let x = y % 2; x < worldWidth; x += 2) {
+      addTile(indices, x, y);
+    }
+  }
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(indices), gl.STREAM_DRAW);
+  gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_INT, 0);
+
+  gl.uniform3f(colorLocation, purple.r, purple.g, purple.b);
+  indices = [];
+  for (let y = 0; y < worldHeight; y++) {
+    for (let x = (y + 1) % 2; x < worldWidth; x += 2) {
+      addTile(indices, x, y);
+    }
+  }
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(indices), gl.STREAM_DRAW);
   gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_INT, 0);
 });
