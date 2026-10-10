@@ -47,15 +47,14 @@ const tileLocation = gl.getUniformLocation(program, "tile");
 const colorLocation = gl.getUniformLocation(program, "color");
 
 // Resize canvas to fit page
-let pixelRatio;
-const worldScale = 20;
+const worldScale = 0.1;
 window.addEventListener("resize", (event) => {
-  pixelRatio = event.target.devicePixelRatio;
+  const pixelRatio = event.target.devicePixelRatio;
   canvas.width = pixelRatio * event.target.innerWidth;
   canvas.height = pixelRatio * event.target.innerHeight;
   const minDimension = Math.min(canvas.width, canvas.height);
   gl.viewport(0, 0, canvas.width, canvas.height);
-  gl.uniform2f(scaleLocation, minDimension / (worldScale * canvas.width), minDimension / (worldScale * canvas.height));
+  gl.uniform2f(scaleLocation, worldScale * minDimension / canvas.width, worldScale * minDimension / canvas.height);
 });
 window.dispatchEvent(new Event("resize"));
 
@@ -65,37 +64,57 @@ gl.bindVertexArray(vertexArray);
 
 // Position buffer
 const positionSize = 2;
-const positions = new Float32Array([
-  1, 1,
-  1, -1,
-  -1, 1,
-  -1, -1,
-]);
 const positionBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
 gl.vertexAttribPointer(positionLocation, positionSize, gl.FLOAT, false, 0, 0);
 gl.enableVertexAttribArray(positionLocation);
 
 // UV buffer
 const uvSize = 2;
-const uvs = new Float32Array([
-  1, 0,
-  1, 1,
-  0, 0,
-  0, 1,
-]);
 const uvBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
-gl.bufferData(gl.ARRAY_BUFFER, uvs, gl.STATIC_DRAW);
 gl.vertexAttribPointer(uvLocation, uvSize, gl.FLOAT, false, 0, 0);
 gl.enableVertexAttribArray(uvLocation);
 
 // Index buffer
-const indices = new Uint32Array([0, 1, 2, 1, 2, 3]);
 const indexBuffer = gl.createBuffer();
+
+// Populate buffers
+const positions = [];
+const uvs = [];
+const indices = [];
+let vertexCount = 0;
+
+for (let x = -5; x < 5; x++) {
+  for (let y = -10; y < 10; y++) {
+    // 0
+    positions.push(x + 1, y + 1);
+    uvs.push(1, 0);
+
+    // 1
+    positions.push(x + 1, y);
+    uvs.push(1, 1);
+
+    // 2
+    positions.push(x, y + 1);
+    uvs.push(0, 0);
+
+    // 3
+    positions.push(x, y);
+    uvs.push(0, 1);
+
+    indices.push(vertexCount, vertexCount + 1, vertexCount + 2);
+    indices.push(vertexCount + 1, vertexCount + 2, vertexCount + 3);
+    vertexCount += 4;
+  }
+}
+
+gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(uvs), gl.STATIC_DRAW);
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(indices), gl.DYNAMIC_DRAW);
 
 // Tile texture
 const tileUnit = 0;
@@ -119,5 +138,5 @@ window.requestAnimationFrame(function loop(time) {
   // Clear screen and draw
   gl.clear(gl.COLOR_BUFFER_BIT);
   gl.uniform3f(colorLocation, 1, 0, 0.8);
-  gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, 0);
+  gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_INT, 0);
 });
