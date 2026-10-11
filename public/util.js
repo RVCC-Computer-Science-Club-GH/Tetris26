@@ -14,7 +14,7 @@ const colors = {
   green: { r: 0x00 / 255, g: 0xFF / 255, b: 0x00 / 255 },
   red: { r: 0xFF / 255, g: 0x00 / 255, b: 0x00 / 255 },
   blue: { r: 0x00 / 255, g: 0x00 / 255, b: 0xFF / 255 },
-  orange: { r: 0xFF / 255, g: 0x80 / 255, b: 0x00 / 255 }
+  orange: { r: 0xFF / 255, g: 0x60 / 255, b: 0x00 / 255 }
 };
 
 // Dimensions
