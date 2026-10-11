@@ -23,8 +23,8 @@ async function loadShader(type, url) {
   return shader;
 }
 const [vertShader, fragShader] = await Promise.all([
-  loadShader(gl.VERTEX_SHADER, "./vert.glsl"),
-  loadShader(gl.FRAGMENT_SHADER, "./frag.glsl")
+  loadShader(gl.VERTEX_SHADER, "assets/vert.glsl"),
+  loadShader(gl.FRAGMENT_SHADER, "assets/frag.glsl")
 ]);
 
 // Shader linking
