@@ -1,6 +1,10 @@
 # Tetris26
-[WebGL Docs](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API)
-Run using `python3 -m http.server -d public`
+
+[Link](https://rvcc-computer-science-club-gh.github.io/Tetris26/public)
+
+[Tetris Guidelines](https://tetris.wiki/Tetris_Guideline)
+
+Run locally with `python3 -m http.server -d public`
 
 - I Piece (Cyan): #00FFFF
 - O Piece (Yellow): #FFFF00
@@ -10,6 +14,4 @@ Run using `python3 -m http.server -d public`
 - J Piece (Blue): #0000FF
 - L Piece (Orange): #FF7F00 
 
-
-[Tetris Guidelines](https://tetris.wiki/Tetris_Guideline)
 <img width="1162" height="242" alt="image" src="https://github.com/user-attachments/assets/8fc529a7-099d-44c6-91d3-0d75233a26f3" />
