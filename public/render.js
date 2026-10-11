@@ -1,5 +1,5 @@
 // Imports
-import { AlertError } from "./util.js";
+import { AlertError, worldWidth, worldHeight } from "./util.js";
 
 // WebGL context
 const gl = canvas.getContext("webgl2", { antialias: true });
@@ -43,10 +43,6 @@ const positionLocation = gl.getAttribLocation(program, "positionIn");
 const uvLocation = gl.getAttribLocation(program, "uvIn");
 const tileLocation = gl.getUniformLocation(program, "tile");
 const colorLocation = gl.getUniformLocation(program, "color");
-
-// Dimensions
-const worldWidth = 10;
-const worldHeight = 20;
 
 // Resize canvas to fit page
 const worldScale = 2 / Math.max(worldWidth, worldHeight);
@@ -126,11 +122,17 @@ function clearScreen() {
 }
 
 // Draw multiple tiles of 1 color
-function drawTiles(color, positions) {
+function drawTiles(color, tiles) {
   gl.uniform3f(colorLocation, color.r, color.g, color.b);
   const indices = [];
-  for (const pos of positions) {
-    const index = 4 * (pos.y * worldWidth + pos.x);
+  for (const tile of tiles) {
+    if (!Number.isInteger(tile.x) || !Number.isInteger(tile.y)) {
+      throw new AlertError("Non-integer tile position");
+    }
+    if (tile.x < 0 || tile.x >= worldWidth || tile.y < 0 || tile.y >= worldHeight) {
+      throw new AlertError("Out of bounds tile position");
+    }
+    const index = 4 * (tile.y * worldWidth + tile.x);
     indices.push(index, index + 1, index + 2);
     indices.push(index + 1, index + 2, index + 3);
   }
@@ -140,4 +142,4 @@ function drawTiles(color, positions) {
 }
 
 // Exports
-export { worldWidth, worldHeight, drawTiles, clearScreen };
+export { clearScreen, drawTiles };

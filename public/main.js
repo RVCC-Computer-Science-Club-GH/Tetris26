@@ -1,6 +1,10 @@
 // Imports
-import { worldWidth, worldHeight, drawTiles, clearScreen } from "./render.js";
-import { colors } from "./util.js";
+import { clearScreen, drawTiles } from "./render.js";
+import { colors, worldWidth, worldHeight } from "./util.js";
+
+// State
+let updateTime = 0;
+const tiles = Array(worldWidth).fill().map(() => []);
 
 // Game loop
 window.requestAnimationFrame(function loop(time) {
@@ -10,30 +14,33 @@ window.requestAnimationFrame(function loop(time) {
   // Time in seconds
   time *= 0.001;
 
+  // Random colors for each tile every 0.5 seconds
+  for (; time > updateTime; updateTime += 0.5) {
+    for (let x = 0; x < worldWidth; x++) {
+      for (let y = 0; y < worldHeight; y++) {
+        if (Math.random() < 0.5) {
+          const keys = Object.keys(colors);
+          tiles[x][y] = keys[Math.floor(keys.length * Math.random())];
+        } else {
+          tiles[x][y] = null;
+        }
+      }
+    }
+  }
+
   // Clear screen
   clearScreen();
 
-  // Alternating color tiles
-  const positions = [];
-  for (let y = 0; y < worldHeight; y++) {
-    for (let x = 0; x < worldWidth; x += 2) {
-      positions.push({ x: x, y: y });
-    }
-  }
-  if (time % 3 < 1.5) {
-    drawTiles(colors.cyan, positions);
-  } else {
-    drawTiles(colors.orange, positions);
-  }
-
-  // Flashing tiles
-  if (time % 6 < 3) {
-    const positions = [];
-    for (let y = 0; y < worldHeight; y++) {
-      for (let x = 1; x < worldWidth; x += 2) {
-        positions.push({ x: x, y: y });
+  // 1 draw call for every color
+  for (const color in colors) {
+    const colorTiles = [];
+    for (let x = 0; x < worldWidth; x++) {
+      for (let y = 0; y < worldHeight; y++) {
+        if (tiles[x][y] == color) {
+          colorTiles.push({ x: x, y: y });
+        }
       }
     }
-    drawTiles(colors.purple, positions);
+    drawTiles(colors[color], colorTiles);
   }
 });
