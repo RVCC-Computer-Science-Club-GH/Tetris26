@@ -17,9 +17,11 @@ const colors = {
   orange: { r: 0xFF / 255, g: 0x80 / 255, b: 0x00 / 255 }
 };
 
-// World dimensions
+// Dimensions
 const width = 10;
 const height = 20;
+const uiWidth = 22;
+const uiHeight = 22;
 
 // Exports
-export { AlertError, colors, width, height };
+export { AlertError, colors, width, height, uiWidth, uiHeight };

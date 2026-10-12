@@ -44,6 +44,6 @@ window.requestAnimationFrame(function loop(time) {
     render.drawTiles(util.colors[color], colorTiles);
   }
 
-  // Draw next UI
-  render.drawNext();
+  // Draw UI
+  render.drawUi();
 });

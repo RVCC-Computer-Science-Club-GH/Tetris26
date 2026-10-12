@@ -47,15 +47,14 @@ const uvLocation = gl.getAttribLocation(program, "uvIn");
 const colorLocation = gl.getUniformLocation(program, "color");
 
 // Resize canvas to fit page
-const worldScale = { x: util.width + 12, y: util.height + 2 };
 window.addEventListener("resize", (event) => {
   const pixelRatio = event.target.devicePixelRatio;
   canvas.width = pixelRatio * event.target.innerWidth;
   canvas.height = pixelRatio * event.target.innerHeight;
   gl.viewport(0, 0, canvas.width, canvas.height);
   const minDimension = 2 * Math.min(
-    canvas.width / worldScale.x,
-    canvas.height / worldScale.y
+    canvas.width / util.uiWidth,
+    canvas.height / util.uiHeight
   );
   gl.uniform2f(
     scaleLocation,
@@ -71,10 +70,10 @@ gl.bindTexture(gl.TEXTURE_2D, tileTexture);
 gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, tileImage);
 gl.generateMipmap(gl.TEXTURE_2D);
 
-// Next texture
-const nextTexture = gl.createTexture();
-gl.bindTexture(gl.TEXTURE_2D, nextTexture);
-gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, nextImage);
+// UI texture
+const uiTexture = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, uiTexture);
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, uiImage);
 gl.generateMipmap(gl.TEXTURE_2D);
 
 // Vertex array
@@ -97,7 +96,7 @@ gl.enableVertexAttribArray(uvLocation);
 
 // Index buffers
 const tileIndexBuffer = gl.createBuffer();
-const nextIndexBuffer = gl.createBuffer();
+const uiIndexBuffer = gl.createBuffer();
 
 // Main tile vertices
 let positions = [];
@@ -115,21 +114,20 @@ for (let y = -util.height / 2; y < util.height / 2; y++) {
   }
 }
 
-// Next UI vertices
-const nextIndex = positions.length / 2;
-const nextBox = { x: 5, y: 7, w: 6, h: 4 };
-positions.push(nextBox.x + nextBox.w, nextBox.y + nextBox.h);
+// UI vertices
+const uiIndex = positions.length / 2;
+positions.push(util.uiWidth / 2, util.uiHeight / 2);
 uvs.push(1, 0);
-positions.push(nextBox.x + nextBox.w, nextBox.y);
+positions.push(util.uiWidth / 2, -util.uiHeight / 2);
 uvs.push(1, 1);
-positions.push(nextBox.x, nextBox.y + nextBox.h);
+positions.push(-util.uiWidth / 2, util.uiHeight / 2);
 uvs.push(0, 0);
-positions.push(nextBox.x, nextBox.y);
+positions.push(-util.uiWidth / 2, -util.uiHeight / 2);
 uvs.push(0, 1);
-gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, nextIndexBuffer);
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, uiIndexBuffer);
 gl.bufferData(
   gl.ELEMENT_ARRAY_BUFFER,
-  new Uint32Array(Array(4).keys().map((i) => i + nextIndex)),
+  new Uint32Array(Array(4).keys().map((i) => i + uiIndex)),
   gl.STATIC_DRAW
 );
 
@@ -167,13 +165,13 @@ function drawTiles(color, tiles) {
   gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_INT, 0);
 }
 
-// Draw next UI
-function drawNext() {
-  gl.bindTexture(gl.TEXTURE_2D, nextTexture);
+// Draw UI
+function drawUi() {
+  gl.bindTexture(gl.TEXTURE_2D, uiTexture);
   gl.uniform3f(colorLocation, 1, 1, 1);
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, nextIndexBuffer);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, uiIndexBuffer);
   gl.drawElements(gl.TRIANGLE_STRIP, 4, gl.UNSIGNED_INT, 0);
 }
 
 // Exports
-export { clearScreen, drawTiles, drawNext };
+export { clearScreen, drawTiles, drawUi };
