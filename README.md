@@ -5,8 +5,11 @@
 [Tetris Guidelines](https://tetris.wiki/Tetris_Guideline)
 
 Initial setup: `npm ci`
+
 Build for development: `npm run dev`
+
 Build for production: `npm run build`
+
 Host locally after build: `python3 -m http.server -d public`
 
 - I Piece (Cyan): #00FFFF
