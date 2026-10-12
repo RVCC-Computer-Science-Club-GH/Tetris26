@@ -100,8 +100,8 @@ const tileIndexBuffer = gl.createBuffer();
 const nextIndexBuffer = gl.createBuffer();
 
 // Main tile vertices
-const positions = [];
-const uvs = [];
+let positions = [];
+let uvs = [];
 for (let y = -util.height / 2; y < util.height / 2; y++) {
   for (let x = -util.width / 2; x < util.width / 2; x++) {
     positions.push(x + 1, y + 1);
@@ -136,8 +136,10 @@ gl.bufferData(
 // Buffer vertices
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+positions = null;
 gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(uvs), gl.STATIC_DRAW);
+uvs = null;
 
 // Clear the screen
 function clearScreen() {
