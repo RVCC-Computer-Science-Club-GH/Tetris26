@@ -1,5 +1,5 @@
 // Imports
-import { clearScreen, drawTiles } from "./render.js";
+import * as render from "./render.js";
 import { colors, worldWidth, worldHeight } from "./util.js";
 
 // State
@@ -29,7 +29,7 @@ window.requestAnimationFrame(function loop(time) {
   }
 
   // Clear screen
-  clearScreen();
+  render.clearScreen();
 
   // 1 draw call for every color
   for (const color in colors) {
@@ -41,6 +41,9 @@ window.requestAnimationFrame(function loop(time) {
         }
       }
     }
-    drawTiles(colors[color], colorTiles);
+    render.drawTiles(colors[color], colorTiles);
   }
+
+  // Draw next UI
+  render.drawNext();
 });

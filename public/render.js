@@ -36,16 +36,18 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
   throw new AlertError(`Failed to link shaders: ${gl.getProgramInfoLog(program)}`);
 }
 gl.useProgram(program);
+gl.deleteShader(vertShader);
+gl.deleteShader(fragShader);
+gl.deleteProgram(program);
 
 // Locations
 const scaleLocation = gl.getUniformLocation(program, "scale");
 const positionLocation = gl.getAttribLocation(program, "positionIn");
 const uvLocation = gl.getAttribLocation(program, "uvIn");
-const tileLocation = gl.getUniformLocation(program, "tile");
 const colorLocation = gl.getUniformLocation(program, "color");
 
 // Resize canvas to fit page
-const worldScale = 2 / Math.max(worldWidth, worldHeight);
+const worldScale = 1.8 / Math.max(worldWidth, worldHeight);
 window.addEventListener("resize", (event) => {
   const pixelRatio = event.target.devicePixelRatio;
   canvas.width = pixelRatio * event.target.innerWidth;
@@ -61,14 +63,15 @@ window.addEventListener("resize", (event) => {
 window.dispatchEvent(new Event("resize"));
 
 // Tile texture
-const tileUnit = 0;
-gl.uniform1i(tileLocation, tileUnit);
-const tileSampler = gl.createSampler();
-gl.bindSampler(tileUnit, tileSampler);
 const tileTexture = gl.createTexture();
-gl.activeTexture(gl.TEXTURE0 + tileUnit);
 gl.bindTexture(gl.TEXTURE_2D, tileTexture);
 gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, tileImage);
+gl.generateMipmap(gl.TEXTURE_2D);
+
+// Next texture
+const nextTexture = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, nextTexture);
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, nextImage);
 gl.generateMipmap(gl.TEXTURE_2D);
 
 // Vertex array
@@ -89,28 +92,44 @@ gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
 gl.vertexAttribPointer(uvLocation, uvSize, gl.FLOAT, false, 0, 0);
 gl.enableVertexAttribArray(uvLocation);
 
-// Index buffer
-const indexBuffer = gl.createBuffer();
+// Index buffers
+const tileIndexBuffer = gl.createBuffer();
+const nextIndexBuffer = gl.createBuffer();
 
 // Populate buffers
 const positions = [];
 const uvs = [];
+
 for (let y = -worldHeight / 2; y < worldHeight / 2; y++) {
   for (let x = -worldWidth / 2; x < worldWidth / 2; x++) {
-    // 0
     positions.push(x + 1, y + 1);
     uvs.push(1, 0);
-    // 1
     positions.push(x + 1, y);
     uvs.push(1, 1);
-    // 2
     positions.push(x, y + 1);
     uvs.push(0, 0);
-    // 3
     positions.push(x, y);
     uvs.push(0, 1);
   }
 }
+
+const nextIndex = positions.length / 2;
+const nextBox = { x: 5, y: 7, w: 6, h: 4 };
+positions.push(nextBox.x + nextBox.w, nextBox.y + nextBox.h);
+uvs.push(1, 0);
+positions.push(nextBox.x + nextBox.w, nextBox.y);
+uvs.push(1, 1);
+positions.push(nextBox.x, nextBox.y + nextBox.h);
+uvs.push(0, 0);
+positions.push(nextBox.x, nextBox.y);
+uvs.push(0, 1);
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, nextIndexBuffer);
+gl.bufferData(
+  gl.ELEMENT_ARRAY_BUFFER,
+  new Uint32Array(Array(4).keys().map((i) => i + nextIndex)),
+  gl.STATIC_DRAW
+);
+
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
@@ -123,6 +142,7 @@ function clearScreen() {
 
 // Draw multiple tiles of 1 color
 function drawTiles(color, tiles) {
+  gl.bindTexture(gl.TEXTURE_2D, tileTexture);
   gl.uniform3f(colorLocation, color.r, color.g, color.b);
   const indices = [];
   for (const tile of tiles) {
@@ -136,10 +156,18 @@ function drawTiles(color, tiles) {
     indices.push(index, index + 1, index + 2);
     indices.push(index + 1, index + 2, index + 3);
   }
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tileIndexBuffer);
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(indices), gl.STREAM_DRAW);
   gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_INT, 0);
 }
 
+// Draw next UI
+function drawNext() {
+  gl.bindTexture(gl.TEXTURE_2D, nextTexture);
+  gl.uniform3f(colorLocation, 1, 1, 1);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, nextIndexBuffer);
+  gl.drawElements(gl.TRIANGLE_STRIP, 4, gl.UNSIGNED_INT, 0);
+}
+
 // Exports
-export { clearScreen, drawTiles };
+export { clearScreen, drawTiles, drawNext };
