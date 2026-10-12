@@ -1,5 +1,7 @@
 // Imports
 import * as util from "./util.js";
+import vertSource from "./vert.glsl" with { type: "text" };
+import fragSource from "./frag.glsl" with { type: "text" };
 
 // WebGL context
 const gl = canvas.getContext("webgl2", { antialias: true });
@@ -12,8 +14,7 @@ gl.enable(gl.BLEND);
 gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
 // Shader compilation
-async function loadShader(type, url) {
-  const source = await (await fetch(url)).text();
+function loadShader(type, source) {
   const shader = gl.createShader(type);
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
@@ -22,10 +23,8 @@ async function loadShader(type, url) {
   }
   return shader;
 }
-const [vertShader, fragShader] = await Promise.all([
-  loadShader(gl.VERTEX_SHADER, "assets/vert.glsl"),
-  loadShader(gl.FRAGMENT_SHADER, "assets/frag.glsl")
-]);
+const vertShader = loadShader(gl.VERTEX_SHADER, vertSource);
+const fragShader = loadShader(gl.FRAGMENT_SHADER, fragSource);
 
 // Shader linking
 const program = gl.createProgram();
@@ -64,17 +63,20 @@ window.addEventListener("resize", (event) => {
 });
 window.dispatchEvent(new Event("resize"));
 
-// Tile texture
-const tileTexture = gl.createTexture();
-gl.bindTexture(gl.TEXTURE_2D, tileTexture);
-gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, tileImage);
-gl.generateMipmap(gl.TEXTURE_2D);
-
-// UI texture
-const uiTexture = gl.createTexture();
-gl.bindTexture(gl.TEXTURE_2D, uiTexture);
-gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, uiImage);
-gl.generateMipmap(gl.TEXTURE_2D);
+// Textures
+function loadTexture(url) {
+  const image = new Image;
+  const texture = gl.createTexture();
+  image.addEventListener("load", () => {
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+    gl.generateMipmap(gl.TEXTURE_2D);
+  });
+  image.src = url;
+  return texture;
+}
+const tileTexture = loadTexture("assets/tile.png");
+const uiTexture = loadTexture("assets/ui.png");
 
 // Vertex array
 const vertexArray = gl.createVertexArray();
