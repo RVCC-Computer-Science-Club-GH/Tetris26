@@ -1,7 +1,6 @@
 # Tetris26
 
-~~[Link](https://rvcc-computer-science-club-gh.github.io/Tetris26)~~
-Broken (run locally for rn)
+[Link](https://rvcc-computer-science-club-gh.github.io/Tetris26)
 
 [Tetris Guidelines](https://tetris.wiki/Tetris_Guideline)
 
