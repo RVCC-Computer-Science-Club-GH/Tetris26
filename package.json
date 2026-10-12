@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "esbuild": "^0.28.2",
+    "http-server": "^14.1.1"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true
+  },
+  "scripts": {
+    "dev": "esbuild --bundle --sourcemap --format=esm --outdir=public src/index.js src/index.css && http-server",
+    "build": "esbuild --bundle --minify --format=esm --outdir=public src/index.js src/index.css"
+  }
+}
