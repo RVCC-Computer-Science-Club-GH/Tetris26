@@ -15,6 +15,6 @@ void main() {
     vec2 tx = uv * textureDims - 0.5 * boxSize;
     vec2 txOffset = smoothstep(1.0 - boxSize, vec2(1), fract(tx));
     vec2 newUv = (floor(tx) + 0.5 + txOffset) / textureDims;
-    vec4 texture = textureGrad(tile, newUv, dFdx(uv), dFdy(uv));
-    colorOut = vec4(color * texture.rgb, texture.a);
+    vec4 txColor = textureGrad(tile, newUv, dFdx(uv), dFdy(uv));
+    colorOut = vec4(color * txColor.rgb, txColor.a);
 }
