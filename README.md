@@ -1,6 +1,6 @@
 # Tetris26
 
-[Link](https://rvcc-computer-science-club-gh.github.io/Tetris26/public)
+~~[Link](https://rvcc-computer-science-club-gh.github.io/Tetris26)~~ Broken (for rn)
 
 [Tetris Guidelines](https://tetris.wiki/Tetris_Guideline)
 
@@ -9,8 +9,6 @@ Initial setup: `npm ci`
 Build for development: `npm run dev`
 
 Build for production: `npm run build`
-
-Host locally after build: `python3 -m http.server -d public`
 
 - I Piece (Cyan): #00FFFF
 - O Piece (Yellow): #FFFF00
