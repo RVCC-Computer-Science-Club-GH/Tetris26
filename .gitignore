@@ -1,5 +1,5 @@
 node_modules
 public/*
-!public/index.html
-!public/index.css
 !public/assets
+!public/index.html
+!public/license.txt

@@ -14,7 +14,7 @@ gl.enable(gl.BLEND);
 gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
 // Shader compilation
-function loadShader(type, source) {
+function compileShader(type, source) {
   const shader = gl.createShader(type);
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
@@ -23,8 +23,8 @@ function loadShader(type, source) {
   }
   return shader;
 }
-const vertShader = loadShader(gl.VERTEX_SHADER, vertSource);
-const fragShader = loadShader(gl.FRAGMENT_SHADER, fragSource);
+const vertShader = compileShader(gl.VERTEX_SHADER, vertSource);
+const fragShader = compileShader(gl.FRAGMENT_SHADER, fragSource);
 
 // Shader linking
 const program = gl.createProgram();

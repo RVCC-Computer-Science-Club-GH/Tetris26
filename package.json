@@ -6,7 +6,7 @@
     "esbuild@0.28.2": true
   },
   "scripts": {
-    "dev": "esbuild src/index.js --bundle --sourcemap --format=esm --outfile=public/index.js",
-    "build": "esbuild src/index.js --bundle --minify --format=esm --outfile=public/index.js"
+    "dev": "esbuild --bundle --sourcemap --format=esm --outdir=public src/index.js src/index.css",
+    "build": "esbuild --bundle --minify --format=esm --outdir=public src/index.js src/index.css"
   }
 }
