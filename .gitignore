@@ -2,4 +2,3 @@ node_modules
 public/*
 !public/assets
 !public/index.html
-!public/license.txt

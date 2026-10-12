@@ -7,7 +7,7 @@
     "esbuild@0.28.2": true
   },
   "scripts": {
-    "dev": "esbuild --bundle --sourcemap --format=esm --outdir=public src/index.js src/index.css && http-server",
-    "build": "esbuild --bundle --minify --format=esm --outdir=public src/index.js src/index.css"
+    "dev": "esbuild --bundle --sourcemap --format=esm --outdir=public src/index.js src/index.css && cp LICENSE public/license.txt && http-server",
+    "build": "esbuild --bundle --minify --format=esm --outdir=public src/index.js src/index.css && cp LICENSE public/license.txt"
   }
 }
