@@ -47,17 +47,20 @@ const uvLocation = gl.getAttribLocation(program, "uvIn");
 const colorLocation = gl.getUniformLocation(program, "color");
 
 // Resize canvas to fit page
-const worldScale = 2.0 / Math.max(util.width, util.height + 2);
+const worldScale = { x: util.width + 12, y: util.height + 2 };
 window.addEventListener("resize", (event) => {
   const pixelRatio = event.target.devicePixelRatio;
   canvas.width = pixelRatio * event.target.innerWidth;
   canvas.height = pixelRatio * event.target.innerHeight;
-  const minDimension = Math.min(canvas.width, canvas.height);
   gl.viewport(0, 0, canvas.width, canvas.height);
+  const minDimension = 2 * Math.min(
+    canvas.width / worldScale.x,
+    canvas.height / worldScale.y
+  );
   gl.uniform2f(
     scaleLocation,
-    worldScale * minDimension / canvas.width,
-    worldScale * minDimension / canvas.height
+    minDimension / canvas.width,
+    minDimension / canvas.height
   );
 });
 window.dispatchEvent(new Event("resize"));
@@ -96,7 +99,7 @@ gl.enableVertexAttribArray(uvLocation);
 const tileIndexBuffer = gl.createBuffer();
 const nextIndexBuffer = gl.createBuffer();
 
-// Populate buffers
+// Main tile vertices
 const positions = [];
 const uvs = [];
 for (let y = -util.height / 2; y < util.height / 2; y++) {
@@ -112,6 +115,7 @@ for (let y = -util.height / 2; y < util.height / 2; y++) {
   }
 }
 
+// Next UI vertices
 const nextIndex = positions.length / 2;
 const nextBox = { x: 5, y: 7, w: 6, h: 4 };
 positions.push(nextBox.x + nextBox.w, nextBox.y + nextBox.h);
@@ -129,6 +133,7 @@ gl.bufferData(
   gl.STATIC_DRAW
 );
 
+// Buffer vertices
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
