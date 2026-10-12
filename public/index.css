@@ -5,24 +5,24 @@ body {
   background-color: #1D2021;
 }
 
-footer {
+body>footer {
   position: absolute;
   bottom: 0;
-  margin: 3px 6px;
+  margin: 4px 6px;
   font-size: 11px;
   color: #3C3836;
   font-family: sans-serif;
 }
 
-footer a {
+body>footer a {
   color: inherit;
+}
+
+.texture {
+  display: none;
 }
 
 #canvas {
   width: 100%;
   height: 100%;
-}
-
-#tileImage {
-  display: none;
 }
