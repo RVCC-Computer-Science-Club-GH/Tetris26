@@ -1,10 +1,10 @@
 // Imports
-import { AlertError, worldWidth, worldHeight } from "./util.js";
+import * as util from "./util.js";
 
 // WebGL context
 const gl = canvas.getContext("webgl2", { antialias: true });
 if (gl === null) {
-  throw new AlertError("Failed to get WebGL context");
+  throw new util.AlertError("Failed to get WebGL context");
 }
 
 // Blending
@@ -18,7 +18,7 @@ async function loadShader(type, url) {
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    throw new AlertError(`Failed to compile shader: ${gl.getShaderInfoLog(shader)}`);
+    throw new util.AlertError(`Failed to compile shader: ${gl.getShaderInfoLog(shader)}`);
   }
   return shader;
 }
@@ -33,7 +33,7 @@ gl.attachShader(program, vertShader);
 gl.attachShader(program, fragShader);
 gl.linkProgram(program);
 if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-  throw new AlertError(`Failed to link shaders: ${gl.getProgramInfoLog(program)}`);
+  throw new util.AlertError(`Failed to link shaders: ${gl.getProgramInfoLog(program)}`);
 }
 gl.useProgram(program);
 gl.deleteShader(vertShader);
@@ -47,7 +47,7 @@ const uvLocation = gl.getAttribLocation(program, "uvIn");
 const colorLocation = gl.getUniformLocation(program, "color");
 
 // Resize canvas to fit page
-const worldScale = 1.8 / Math.max(worldWidth, worldHeight);
+const worldScale = 2.0 / Math.max(util.width, util.height + 2);
 window.addEventListener("resize", (event) => {
   const pixelRatio = event.target.devicePixelRatio;
   canvas.width = pixelRatio * event.target.innerWidth;
@@ -99,9 +99,8 @@ const nextIndexBuffer = gl.createBuffer();
 // Populate buffers
 const positions = [];
 const uvs = [];
-
-for (let y = -worldHeight / 2; y < worldHeight / 2; y++) {
-  for (let x = -worldWidth / 2; x < worldWidth / 2; x++) {
+for (let y = -util.height / 2; y < util.height / 2; y++) {
+  for (let x = -util.width / 2; x < util.width / 2; x++) {
     positions.push(x + 1, y + 1);
     uvs.push(1, 0);
     positions.push(x + 1, y);
@@ -147,12 +146,12 @@ function drawTiles(color, tiles) {
   const indices = [];
   for (const tile of tiles) {
     if (!Number.isInteger(tile.x) || !Number.isInteger(tile.y)) {
-      throw new AlertError("Non-integer tile position");
+      throw new util.AlertError("Non-integer tile position");
     }
-    if (tile.x < 0 || tile.x >= worldWidth || tile.y < 0 || tile.y >= worldHeight) {
-      throw new AlertError("Out of bounds tile position");
+    if (tile.x < 0 || tile.x >= util.width || tile.y < 0 || tile.y >= util.height) {
+      throw new util.AlertError("Out of bounds tile position");
     }
-    const index = 4 * (tile.y * worldWidth + tile.x);
+    const index = 4 * (tile.y * util.width + tile.x);
     indices.push(index, index + 1, index + 2);
     indices.push(index + 1, index + 2, index + 3);
   }
