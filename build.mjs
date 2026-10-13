@@ -36,7 +36,7 @@ const options = {
 };
 
 // Clean public
-fs.rmSync("public", { recursive: true });
+fs.rmSync("public", { force: true, recursive: true });
 
 // Serve or build
 if (args.dev) {
