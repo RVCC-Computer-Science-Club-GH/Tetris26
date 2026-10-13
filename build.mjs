@@ -1,6 +1,8 @@
-import * as util from "node:util";
-import * as esbuild from "esbuild";
-import * as fs from "fs";
+import util from "node:util";
+import esbuild from "esbuild";
+import fs from "fs";
+import htmlPlugin from "@chialab/esbuild-plugin-html";
+import glsl from "esbuild-plugin-glsl";
 
 const args = util.parseArgs({
   options: {
@@ -11,9 +13,12 @@ const args = util.parseArgs({
 fs.copyFileSync("LICENSE", "public/license.txt");
 
 await esbuild.build({
-  entryPoints: ["src/index.mjs", "src/index.css"],
+  entryPoints: ["src/index.html"],
   bundle: true,
   minify: !args.dev,
   sourcemap: args.dev,
   outdir: "public",
+  assetNames: 'build/[name]-[hash]',
+  chunkNames: 'build/[name]-[hash]',
+  plugins: [htmlPlugin(), glsl()],
 });

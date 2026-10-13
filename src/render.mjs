@@ -1,7 +1,7 @@
 // Imports
 import * as util from "./util.mjs";
-import vertSource from "./vert.glsl" with { type: "text" };
-import fragSource from "./frag.glsl" with { type: "text" };
+import vertSource from "./vert.glsl";
+import fragSource from "./frag.glsl";
 
 // WebGL context
 const gl = canvas.getContext("webgl2", { antialias: true });
@@ -71,7 +71,7 @@ function loadTexture(url) {
     gl.bindTexture(gl.TEXTURE_2D, texture);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
     gl.generateMipmap(gl.TEXTURE_2D);
-  });
+  }, { once: true });
   image.src = url;
   return texture;
 }
