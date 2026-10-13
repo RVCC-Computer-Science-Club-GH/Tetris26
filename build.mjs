@@ -1,5 +1,5 @@
 // Imports
-import util from "node:util";
+import util from "util";
 import esbuild from "esbuild";
 import htmlPlugin from "@chialab/esbuild-plugin-html";
 import glsl from "esbuild-plugin-glsl";
@@ -7,6 +7,7 @@ import { sassPlugin } from "esbuild-sass-plugin";
 import progress from "esbuild-plugin-progress";
 import copyPluginPkg from "@sprout2000/esbuild-copy-plugin";
 const { copyPlugin } = copyPluginPkg;
+import fs from "fs";
 
 // Build args
 const args = util.parseArgs({
@@ -33,6 +34,9 @@ const options = {
     copyPlugin({ src: "LICENSE", dest: "public/license.txt" })
   ],
 };
+
+// Clean public
+fs.rmSync("public", { recursive: true });
 
 // Serve or build
 if (args.dev) {

@@ -2,13 +2,13 @@
 
 [Link](https://rvcc-computer-science-club-gh.github.io/Tetris26)
 
-[Tetris Guidelines](https://tetris.wiki/Tetris_Guideline)
-
 Initial setup: `npm ci`
 
 Build for development: `npm run dev`
 
 Build for production: `npm run build`
+
+[Tetris Guidelines](https://tetris.wiki/Tetris_Guideline)
 
 - I Piece (Cyan): #00FFFF
 - O Piece (Yellow): #FFFF00
