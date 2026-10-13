@@ -1,18 +1,21 @@
+// Imports
 import util from "node:util";
 import esbuild from "esbuild";
 import htmlPlugin from "@chialab/esbuild-plugin-html";
 import glsl from "esbuild-plugin-glsl";
 import { sassPlugin } from "esbuild-sass-plugin";
 import progress from "esbuild-plugin-progress";
-import pkg from "@sprout2000/esbuild-copy-plugin";
-const { copyPlugin } = pkg;
+import copyPluginPkg from "@sprout2000/esbuild-copy-plugin";
+const { copyPlugin } = copyPluginPkg;
 
+// Build args
 const args = util.parseArgs({
   options: {
     dev: { type: "boolean", short: "d", default: false }
   }
 }).values;
 
+// Esbuild options
 const options = {
   entryPoints: ["src/index.html"],
   bundle: true,
@@ -31,6 +34,7 @@ const options = {
   ],
 };
 
+// Serve or build
 if (args.dev) {
   console.log("Open https://localhost:8000");
   console.log("Reload page to trigger rebuild");
