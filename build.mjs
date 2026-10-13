@@ -1,10 +1,11 @@
 import util from "node:util";
 import esbuild from "esbuild";
-import fs from "fs";
 import htmlPlugin from "@chialab/esbuild-plugin-html";
 import glsl from "esbuild-plugin-glsl";
 import { sassPlugin } from "esbuild-sass-plugin";
 import progress from "esbuild-plugin-progress";
+import pkg from "@sprout2000/esbuild-copy-plugin";
+const { copyPlugin } = pkg;
 
 const args = util.parseArgs({
   options: {
@@ -25,7 +26,8 @@ const options = {
     htmlPlugin(),
     glsl(),
     sassPlugin(),
-    progress()
+    progress(),
+    copyPlugin({ src: "LICENSE", dest: "public/license.txt" })
   ],
 };
 
@@ -37,5 +39,3 @@ if (args.dev) {
 } else {
   await esbuild.build(options);
 }
-
-fs.copyFileSync("LICENSE", "public/license.txt");
