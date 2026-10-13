@@ -7,7 +7,7 @@
     "esbuild@0.28.2": true
   },
   "scripts": {
-    "dev": "esbuild --bundle --sourcemap --format=esm --outdir=public src/index.js src/index.css && cp LICENSE public/license.txt && http-server",
-    "build": "esbuild --bundle --minify --format=esm --outdir=public src/index.js src/index.css && cp LICENSE public/license.txt"
+    "dev": "node build.mjs --dev && http-server",
+    "build": "node build.mjs"
   }
 }
