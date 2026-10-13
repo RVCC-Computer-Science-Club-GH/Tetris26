@@ -18,7 +18,7 @@ await esbuild.build({
   minify: !args.dev,
   sourcemap: args.dev,
   outdir: "public",
-  assetNames: 'build/[name]-[hash]',
-  chunkNames: 'build/[name]-[hash]',
+  assetNames: "build/[name]-[hash]",
+  chunkNames: "build/[name]-[hash]",
   plugins: [htmlPlugin(), glsl()],
 });
