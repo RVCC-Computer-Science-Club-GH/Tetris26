@@ -25,13 +25,13 @@ const options = {
   outdir: "public",
   assetNames: "assets/[name]-[hash]",
   chunkNames: "chunks/[name]-[hash]",
-  loader: { ".png": "file" },
+  loader: { ".png": "dataurl" },
   plugins: [
     htmlPlugin(),
     glsl(),
     sassPlugin(),
     progress(),
-    copyPlugin({ src: "LICENSE", dest: "public/license.txt" })
+    copyPlugin({ force: true, src: "LICENSE", dest: "public/license.txt" }),
   ],
 };
 
