@@ -31,6 +31,9 @@ window.requestAnimationFrame(function loop(time) {
   // Clear screen
   render.clearScreen();
 
+  // Draw UI
+  render.drawUi();
+
   // 1 draw call for every color
   for (const color in util.colors) {
     const colorTiles = [];
@@ -43,7 +46,4 @@ window.requestAnimationFrame(function loop(time) {
     }
     render.drawTiles(util.colors[color], colorTiles);
   }
-
-  // Draw UI
-  render.drawUi();
 });
