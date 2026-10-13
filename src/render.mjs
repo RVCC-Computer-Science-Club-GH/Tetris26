@@ -1,5 +1,5 @@
 // Imports
-import * as util from "./util.js";
+import * as util from "./util.mjs";
 import vertSource from "./vert.glsl" with { type: "text" };
 import fragSource from "./frag.glsl" with { type: "text" };
 

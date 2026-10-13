@@ -11,10 +11,9 @@ const args = util.parseArgs({
 fs.copyFileSync("LICENSE", "public/license.txt");
 
 await esbuild.build({
-  entryPoints: ["src/index.js", "src/index.css"],
+  entryPoints: ["src/index.mjs", "src/index.css"],
   bundle: true,
   minify: !args.dev,
   sourcemap: args.dev,
-  format: "esm",
   outdir: "public",
 });

@@ -1,6 +1,6 @@
 // Imports
-import * as render from "./render.js";
-import * as util from "./util.js";
+import * as render from "./render.mjs";
+import * as util from "./util.mjs";
 
 // State
 let updateTime = 0;
