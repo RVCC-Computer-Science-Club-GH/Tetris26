@@ -19,7 +19,7 @@ await esbuild.build({
   outdir: "public",
   assetNames: "assets/[name]-[hash]",
   chunkNames: "chunks/[name]-[hash]",
-  loader: { ".png": "file" },
+  loader: { ".png": "dataurl" },
   plugins: [htmlPlugin(), glsl(), sassPlugin()],
 });
 
