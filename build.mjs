@@ -3,6 +3,7 @@ import esbuild from "esbuild";
 import fs from "fs";
 import htmlPlugin from "@chialab/esbuild-plugin-html";
 import glsl from "esbuild-plugin-glsl";
+import { sassPlugin } from "esbuild-sass-plugin";
 
 const args = util.parseArgs({
   options: {
@@ -19,7 +20,7 @@ await esbuild.build({
   assetNames: "assets/[name]-[hash]",
   chunkNames: "chunks/[name]-[hash]",
   loader: { ".png": "dataurl" },
-  plugins: [htmlPlugin(), glsl()],
+  plugins: [htmlPlugin(), glsl(), sassPlugin()],
 });
 
 fs.copyFileSync("LICENSE", "public/license.txt");
