@@ -25,7 +25,7 @@ const options = {
   outdir: "public",
   assetNames: "assets/[name]-[hash]",
   chunkNames: "chunks/[name]-[hash]",
-  loader: { ".png": "dataurl" },
+  loader: { ".png": "file" },
   plugins: [
     htmlPlugin(),
     glsl(),
