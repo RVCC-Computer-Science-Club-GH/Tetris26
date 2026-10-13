@@ -10,15 +10,16 @@ const args = util.parseArgs({
   }
 }).values;
 
-fs.copyFileSync("LICENSE", "public/license.txt");
-
 await esbuild.build({
   entryPoints: ["src/index.html"],
   bundle: true,
   minify: !args.dev,
   sourcemap: args.dev,
   outdir: "public",
-  assetNames: "build/[name]-[hash]",
-  chunkNames: "build/[name]-[hash]",
+  assetNames: "assets/[name]-[hash]",
+  chunkNames: "chunks/[name]-[hash]",
+  loader: { ".png": "dataurl" },
   plugins: [htmlPlugin(), glsl()],
 });
+
+fs.copyFileSync("LICENSE", "public/license.txt");
