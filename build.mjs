@@ -26,6 +26,15 @@ const options = {
   assetNames: "assets/[name]-[hash]",
   chunkNames: "chunks/[name]-[hash]",
   loader: { ".webp": "dataurl" },
+  target: [
+    "es2020",
+    "chrome80",
+    "edge80",
+    "firefox78",
+    "safari14",
+    "ios14",
+    "opera67",
+  ],
   plugins: [
     htmlPlugin(),
     glsl(),

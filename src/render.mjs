@@ -2,8 +2,6 @@
 import * as util from "./util.mjs";
 import vertSource from "./vert.glsl";
 import fragSource from "./frag.glsl";
-import tileImage from "./assets/tile.webp";
-import uiImage from "./assets/ui.webp";
 
 // WebGL context
 const gl = canvas.getContext("webgl2", { antialias: true });
@@ -77,7 +75,9 @@ function loadTexture(url) {
   image.src = url;
   return texture;
 }
+import tileImage from "./assets/tile.webp";
 const tileTexture = loadTexture(tileImage);
+import uiImage from "./assets/ui.webp";
 const uiTexture = loadTexture(uiImage);
 
 // Vertex array
