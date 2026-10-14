@@ -63,7 +63,7 @@ window.addEventListener("resize", (event) => {
 });
 window.dispatchEvent(new Event("resize"));
 
-// Textures
+// Texture loading
 function loadTexture(url) {
   const image = new Image;
   const texture = gl.createTexture();
@@ -75,10 +75,6 @@ function loadTexture(url) {
   image.src = url;
   return texture;
 }
-import tileImage from "./assets/tile.webp";
-const tileTexture = loadTexture(tileImage);
-import backgroundImage from "./assets/background.webp";
-const backgroundTexture = loadTexture(backgroundImage);
 
 // Vertex array
 const vertexArray = gl.createVertexArray();
@@ -143,8 +139,8 @@ function clearScreen() {
 }
 
 // Draw multiple tiles of 1 color
-function drawTiles(color, width, height, renderIndex, tiles) {
-  gl.bindTexture(gl.TEXTURE_2D, tileTexture);
+function drawTiles(color, width, height, renderIndex, texture, tiles) {
+  gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.uniform3f(colorLocation, color.r, color.g, color.b);
   const indices = [];
   for (const tile of tiles) {
@@ -164,12 +160,12 @@ function drawTiles(color, width, height, renderIndex, tiles) {
 }
 
 // Draw background
-function drawBackground() {
-  gl.bindTexture(gl.TEXTURE_2D, backgroundTexture);
+function drawBackground(texture) {
+  gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.uniform3f(colorLocation, 1, 1, 1);
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, backgroundIndexBuffer);
   gl.drawElements(gl.TRIANGLE_STRIP, 4, gl.UNSIGNED_INT, 0);
 }
 
 // Exports
-export { clearScreen, drawTiles, drawBackground, mainIndex, nextIndex };
+export { loadTexture, clearScreen, drawTiles, drawBackground, mainIndex, nextIndex };

@@ -6,6 +6,12 @@ import * as util from "./util.mjs";
 let updateTime = 0;
 const tiles = Array(util.width).fill().map(() => []);
 
+// Textures
+import tileImage from "./assets/tile.webp";
+const tileTexture = render.loadTexture(tileImage);
+import backgroundImage from "./assets/background.webp";
+const backgroundTexture = render.loadTexture(backgroundImage);
+
 // Game loop
 window.requestAnimationFrame(function loop(time) {
   // Request a new frame before any errors
@@ -32,7 +38,7 @@ window.requestAnimationFrame(function loop(time) {
   render.clearScreen();
 
   // Draw background
-  render.drawBackground();
+  render.drawBackground(backgroundTexture);
 
   // 1 draw call for every color of the main tiles
   for (const color in util.colors) {
@@ -49,6 +55,7 @@ window.requestAnimationFrame(function loop(time) {
       util.width,
       util.height,
       render.mainIndex,
+      tileTexture,
       colorTiles
     );
   }
@@ -59,6 +66,7 @@ window.requestAnimationFrame(function loop(time) {
     util.nextWidth,
     util.nextHeight,
     render.nextIndex,
+    tileTexture,
     [
       { x: 0, y: 0 },
       { x: 1, y: 0 },
