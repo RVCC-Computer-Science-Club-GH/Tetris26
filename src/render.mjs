@@ -84,18 +84,12 @@ const backgroundTexture = loadTexture(backgroundImage);
 const vertexArray = gl.createVertexArray();
 gl.bindVertexArray(vertexArray);
 
-// Position buffer
-const positionSize = 2;
-const positionBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-gl.vertexAttribPointer(positionLocation, positionSize, gl.FLOAT, false, 0, 0);
+// Vertex buffer
+const vertexBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 16, 0);
 gl.enableVertexAttribArray(positionLocation);
-
-// UV buffer
-const uvSize = 2;
-const uvBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
-gl.vertexAttribPointer(uvLocation, uvSize, gl.FLOAT, false, 0, 0);
+gl.vertexAttribPointer(uvLocation, 2, gl.FLOAT, false, 16, 8);
 gl.enableVertexAttribArray(uvLocation);
 
 // Index buffers
@@ -103,47 +97,34 @@ const tileIndexBuffer = gl.createBuffer();
 const backgroundIndexBuffer = gl.createBuffer();
 
 // Main tile vertices
-let positions = [];
-let uvs = [];
+let vertices = [];
 const mainIndex = 0;
 for (let y = -util.height / 2; y < util.height / 2; y++) {
   for (let x = -util.width / 2; x < util.width / 2; x++) {
-    positions.push(x + 1, y + 1);
-    uvs.push(1, 0);
-    positions.push(x + 1, y);
-    uvs.push(1, 1);
-    positions.push(x, y + 1);
-    uvs.push(0, 0);
-    positions.push(x, y);
-    uvs.push(0, 1);
+    vertices.push(x + 1, y + 1, 1, 0);
+    vertices.push(x + 1, y, 1, 1);
+    vertices.push(x, y + 1, 0, 0);
+    vertices.push(x, y, 0, 1);
   }
 }
 
 // Next tile vertices
-const nextIndex = positions.length / 2;
+const nextIndex = vertices.length / 4;
 for (let y = util.height / 2 - util.nextHeight; y < util.height / 2; y++) {
   for (let x = util.width / 2 + 1; x < util.width / 2 + util.nextWidth + 1; x++) {
-    positions.push(x + 1, y + 1);
-    uvs.push(1, 0);
-    positions.push(x + 1, y);
-    uvs.push(1, 1);
-    positions.push(x, y + 1);
-    uvs.push(0, 0);
-    positions.push(x, y);
-    uvs.push(0, 1);
+    vertices.push(x + 1, y + 1, 1, 0);
+    vertices.push(x + 1, y, 1, 1);
+    vertices.push(x, y + 1, 0, 0);
+    vertices.push(x, y, 0, 1);
   }
 }
 
 // Background vertices
-const backgroundIndex = positions.length / 2;
-positions.push(util.bgWidth / 2, util.bgHeight / 2);
-uvs.push(1, 0);
-positions.push(util.bgWidth / 2, -util.bgHeight / 2);
-uvs.push(1, 1);
-positions.push(-util.bgWidth / 2, util.bgHeight / 2);
-uvs.push(0, 0);
-positions.push(-util.bgWidth / 2, -util.bgHeight / 2);
-uvs.push(0, 1);
+const backgroundIndex = vertices.length / 4;
+vertices.push(util.bgWidth / 2, util.bgHeight / 2, 1, 0);
+vertices.push(util.bgWidth / 2, -util.bgHeight / 2, 1, 1);
+vertices.push(-util.bgWidth / 2, util.bgHeight / 2, 0, 0);
+vertices.push(-util.bgWidth / 2, -util.bgHeight / 2, 0, 1);
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, backgroundIndexBuffer);
 gl.bufferData(
   gl.ELEMENT_ARRAY_BUFFER,
@@ -152,12 +133,9 @@ gl.bufferData(
 );
 
 // Buffer vertices
-gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-positions = null;
-gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(uvs), gl.STATIC_DRAW);
-uvs = null;
+gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+vertices = null;
 
 // Clear the screen
 function clearScreen() {
