@@ -31,8 +31,8 @@ window.requestAnimationFrame(function loop(time) {
   // Clear screen
   render.clearScreen();
 
-  // Draw UI
-  render.drawUi();
+  // Draw background
+  render.drawBackground();
 
   // 1 draw call for every color
   for (const color in util.colors) {

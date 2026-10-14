@@ -20,8 +20,8 @@ const colors = {
 // Dimensions
 const width = 10;
 const height = 20;
-const uiWidth = 22;
-const uiHeight = 22;
+const bgWidth = 22;
+const bgHeight = 22;
 
 // Exports
-export { AlertError, colors, width, height, uiWidth, uiHeight };
+export { AlertError, colors, width, height, bgWidth, bgHeight };
