@@ -107,6 +107,22 @@ class Mesh {
   }
 }
 
+// Sprite class
+class Sprite extends Mesh {
+  // Constructor
+  constructor(pos, size) {
+    super(
+      [
+        pos.x + size.w, pos.y + size.h, 1, 0,
+        pos.x + size.w, pos.y, 1, 1,
+        pos.x, pos.y + size.h, 0, 0,
+        pos.x, pos.y, 0, 1,
+      ],
+      [0, 1, 2, 1, 2, 3]
+    );
+  }
+}
+
 // Tiles class
 class Tiles extends Mesh {
   // Constructor
@@ -169,7 +185,7 @@ function setColor(color) {
 // Exports
 export {
   loadTexture,
-  Mesh,
+  Sprite,
   Tiles,
   clearScreen,
   setTexture,

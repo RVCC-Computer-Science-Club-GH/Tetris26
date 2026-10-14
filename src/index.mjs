@@ -9,14 +9,9 @@ import tileImage from "./assets/tile.webp";
 const tileTexture = render.loadTexture(tileImage);
 
 // Meshes
-const backgroundMesh = new render.Mesh(
-  [
-    util.worldSize.w / 2, util.worldSize.h / 2, 1, 0,
-    util.worldSize.w / 2, -util.worldSize.h / 2, 1, 1,
-    -util.worldSize.w / 2, util.worldSize.h / 2, 0, 0,
-    -util.worldSize.w / 2, -util.worldSize.h / 2, 0, 1,
-  ],
-  [0, 1, 2, 1, 2, 3]
+const backgroundSprite = new render.Sprite(
+  { x: -util.worldSize.w / 2, y: -util.worldSize.h / 2 },
+  { w: util.worldSize.w, h: util.worldSize.h }
 );
 const mainTiles = new render.Tiles(
   { x: -5, y: -10 },
@@ -59,7 +54,7 @@ window.requestAnimationFrame(function loop(time) {
   // Draw background
   render.setColor({ r: 1, g: 1, b: 1 });
   render.setTexture(backgroundTexture);
-  backgroundMesh.render();
+  backgroundSprite.render();
 
   // 1 draw call for every color of the main tiles
   render.setTexture(tileTexture);
