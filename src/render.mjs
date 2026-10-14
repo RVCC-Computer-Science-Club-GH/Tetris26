@@ -105,8 +105,24 @@ const backgroundIndexBuffer = gl.createBuffer();
 // Main tile vertices
 let positions = [];
 let uvs = [];
+const mainIndex = 0;
 for (let y = -util.height / 2; y < util.height / 2; y++) {
   for (let x = -util.width / 2; x < util.width / 2; x++) {
+    positions.push(x + 1, y + 1);
+    uvs.push(1, 0);
+    positions.push(x + 1, y);
+    uvs.push(1, 1);
+    positions.push(x, y + 1);
+    uvs.push(0, 0);
+    positions.push(x, y);
+    uvs.push(0, 1);
+  }
+}
+
+// Next tile vertices
+const nextIndex = positions.length / 2;
+for (let y = util.height / 2 - util.nextHeight; y < util.height / 2; y++) {
+  for (let x = util.width / 2 + 1; x < util.width / 2 + util.nextWidth + 1; x++) {
     positions.push(x + 1, y + 1);
     uvs.push(1, 0);
     positions.push(x + 1, y);
@@ -149,7 +165,7 @@ function clearScreen() {
 }
 
 // Draw multiple tiles of 1 color
-function drawTiles(color, tiles) {
+function drawTiles(color, width, height, renderIndex, tiles) {
   gl.bindTexture(gl.TEXTURE_2D, tileTexture);
   gl.uniform3f(colorLocation, color.r, color.g, color.b);
   const indices = [];
@@ -157,10 +173,10 @@ function drawTiles(color, tiles) {
     if (!Number.isInteger(tile.x) || !Number.isInteger(tile.y)) {
       throw new util.AlertError("Non-integer tile position");
     }
-    if (tile.x < 0 || tile.x >= util.width || tile.y < 0 || tile.y >= util.height) {
+    if (tile.x < 0 || tile.x >= width || tile.y < 0 || tile.y >= height) {
       throw new util.AlertError("Out of bounds tile position");
     }
-    const index = 4 * (tile.y * util.width + tile.x);
+    const index = renderIndex + 4 * (tile.y * width + tile.x);
     indices.push(index, index + 1, index + 2);
     indices.push(index + 1, index + 2, index + 3);
   }
@@ -178,4 +194,4 @@ function drawBackground() {
 }
 
 // Exports
-export { clearScreen, drawTiles, drawBackground };
+export { clearScreen, drawTiles, drawBackground, mainIndex, nextIndex };

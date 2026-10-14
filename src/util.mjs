@@ -22,6 +22,8 @@ const width = 10;
 const height = 20;
 const bgWidth = 22;
 const bgHeight = 22;
+const nextWidth = 4;
+const nextHeight = 2;
 
 // Exports
-export { AlertError, colors, width, height, bgWidth, bgHeight };
+export { AlertError, colors, width, height, bgWidth, bgHeight, nextWidth, nextHeight };

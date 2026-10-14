@@ -34,7 +34,7 @@ window.requestAnimationFrame(function loop(time) {
   // Draw background
   render.drawBackground();
 
-  // 1 draw call for every color
+  // 1 draw call for every color of the main tiles
   for (const color in util.colors) {
     const colorTiles = [];
     for (let x = 0; x < util.width; x++) {
@@ -44,6 +44,26 @@ window.requestAnimationFrame(function loop(time) {
         }
       }
     }
-    render.drawTiles(util.colors[color], colorTiles);
+    render.drawTiles(
+      util.colors[color],
+      util.width,
+      util.height,
+      render.mainIndex,
+      colorTiles
+    );
   }
+
+  // Draw next tiles
+  render.drawTiles(
+    util.colors.green,
+    util.nextWidth,
+    util.nextHeight,
+    render.nextIndex,
+    [
+      { x: 0, y: 0 },
+      { x: 1, y: 0 },
+      { x: 1, y: 1 },
+      { x: 2, y: 1 }
+    ]
+  );
 });
