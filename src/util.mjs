@@ -18,12 +18,21 @@ const colors = {
 };
 
 // Dimensions
-const width = 10;
-const height = 20;
-const bgWidth = 22;
-const bgHeight = 22;
+const worldWidth = 22;
+const worldHeight = 22;
+const mainWidth = 10;
+const mainHeight = 20;
 const nextWidth = 4;
 const nextHeight = 2;
 
 // Exports
-export { AlertError, colors, width, height, bgWidth, bgHeight, nextWidth, nextHeight };
+export {
+  AlertError,
+  colors,
+  worldWidth,
+  worldHeight,
+  mainWidth,
+  mainHeight,
+  nextWidth,
+  nextHeight
+};

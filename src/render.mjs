@@ -52,8 +52,8 @@ window.addEventListener("resize", (event) => {
   canvas.height = pixelRatio * event.target.innerHeight;
   gl.viewport(0, 0, canvas.width, canvas.height);
   const minDimension = 2 * Math.min(
-    canvas.width / util.bgWidth,
-    canvas.height / util.bgHeight
+    canvas.width / util.worldWidth,
+    canvas.height / util.worldHeight
   );
   gl.uniform2f(
     scaleLocation,
@@ -76,96 +76,102 @@ function loadTexture(url) {
   return texture;
 }
 
-// Vertex array
-const vertexArray = gl.createVertexArray();
-gl.bindVertexArray(vertexArray);
+// Mesh class
+class Mesh {
+  // Constructor
+  constructor(vertices, indices) {
+    // Vertex array
+    this.vertexArray = gl.createVertexArray();
+    gl.bindVertexArray(this.vertexArray);
 
-// Vertex buffer
-const vertexBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 16, 0);
-gl.enableVertexAttribArray(positionLocation);
-gl.vertexAttribPointer(uvLocation, 2, gl.FLOAT, false, 16, 8);
-gl.enableVertexAttribArray(uvLocation);
+    // Vertex buffer
+    const vertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 16, 0);
+    gl.enableVertexAttribArray(positionLocation);
+    gl.vertexAttribPointer(uvLocation, 2, gl.FLOAT, false, 16, 8);
+    gl.enableVertexAttribArray(uvLocation);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
-// Index buffers
-const tileIndexBuffer = gl.createBuffer();
-const backgroundIndexBuffer = gl.createBuffer();
+    // Index Buffer
+    this.vertexCount = indices.length;
+    const indexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(indices), gl.STATIC_DRAW);
+  }
 
-// Main tile vertices
-let vertices = [];
-const mainIndex = 0;
-for (let y = -util.height / 2; y < util.height / 2; y++) {
-  for (let x = -util.width / 2; x < util.width / 2; x++) {
-    vertices.push(x + 1, y + 1, 1, 0);
-    vertices.push(x + 1, y, 1, 1);
-    vertices.push(x, y + 1, 0, 0);
-    vertices.push(x, y, 0, 1);
+  // Render
+  render() {
+    gl.bindVertexArray(this.vertexArray);
+    gl.drawElements(gl.TRIANGLES, this.vertexCount, gl.UNSIGNED_INT, 0);
   }
 }
 
-// Next tile vertices
-const nextIndex = vertices.length / 4;
-for (let y = util.height / 2 - util.nextHeight; y < util.height / 2; y++) {
-  for (let x = util.width / 2 + 1; x < util.width / 2 + util.nextWidth + 1; x++) {
-    vertices.push(x + 1, y + 1, 1, 0);
-    vertices.push(x + 1, y, 1, 1);
-    vertices.push(x, y + 1, 0, 0);
-    vertices.push(x, y, 0, 1);
+// Tiles class
+class Tiles extends Mesh {
+  // Constructor
+  constructor(pos, size) {
+    // Generate vertices
+    const vertices = [];
+    for (let y = pos.y; y < pos.y + size.h; y++) {
+      for (let x = pos.x; x < pos.x + size.w; x++) {
+        vertices.push(x + 1, y + 1, 1, 0);
+        vertices.push(x + 1, y, 1, 1);
+        vertices.push(x, y + 1, 0, 0);
+        vertices.push(x, y, 0, 1);
+      }
+    }
+
+    // Mesh constructor
+    super(vertices, []);
+    this.size = size;
+  }
+
+  // Render
+  render(tiles) {
+    // Generate indices
+    const indices = [];
+    for (const tile of tiles) {
+      if (!Number.isInteger(tile.x) || !Number.isInteger(tile.y)) {
+        throw new util.AlertError("Non-integer tile position");
+      }
+      if (tile.x < 0 || tile.x >= this.size.w || tile.y < 0 || tile.y >= this.size.h) {
+        throw new util.AlertError("Out of bounds tile position");
+      }
+      const index = 4 * (tile.y * this.size.w + tile.x);
+      indices.push(index, index + 1, index + 2);
+      indices.push(index + 1, index + 2, index + 3);
+    }
+    this.vertexCount = indices.length;
+
+    // Buffer indices and draw
+    gl.bindVertexArray(this.vertexArray);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(indices), gl.DYNAMIC_DRAW);
+    gl.drawElements(gl.TRIANGLES, this.vertexCount, gl.UNSIGNED_INT, 0);
   }
 }
-
-// Background vertices
-const backgroundIndex = vertices.length / 4;
-vertices.push(util.bgWidth / 2, util.bgHeight / 2, 1, 0);
-vertices.push(util.bgWidth / 2, -util.bgHeight / 2, 1, 1);
-vertices.push(-util.bgWidth / 2, util.bgHeight / 2, 0, 0);
-vertices.push(-util.bgWidth / 2, -util.bgHeight / 2, 0, 1);
-gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, backgroundIndexBuffer);
-gl.bufferData(
-  gl.ELEMENT_ARRAY_BUFFER,
-  new Uint32Array(Array(4).keys().map((i) => i + backgroundIndex)),
-  gl.STATIC_DRAW
-);
-
-// Buffer vertices
-gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-vertices = null;
 
 // Clear the screen
 function clearScreen() {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 }
 
-// Draw multiple tiles of 1 color
-function drawTiles(color, width, height, renderIndex, texture, tiles) {
+// Set texture
+function setTexture(texture) {
   gl.bindTexture(gl.TEXTURE_2D, texture);
-  gl.uniform3f(colorLocation, color.r, color.g, color.b);
-  const indices = [];
-  for (const tile of tiles) {
-    if (!Number.isInteger(tile.x) || !Number.isInteger(tile.y)) {
-      throw new util.AlertError("Non-integer tile position");
-    }
-    if (tile.x < 0 || tile.x >= width || tile.y < 0 || tile.y >= height) {
-      throw new util.AlertError("Out of bounds tile position");
-    }
-    const index = renderIndex + 4 * (tile.y * width + tile.x);
-    indices.push(index, index + 1, index + 2);
-    indices.push(index + 1, index + 2, index + 3);
-  }
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tileIndexBuffer);
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(indices), gl.STREAM_DRAW);
-  gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_INT, 0);
 }
 
-// Draw background
-function drawBackground(texture) {
-  gl.bindTexture(gl.TEXTURE_2D, texture);
-  gl.uniform3f(colorLocation, 1, 1, 1);
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, backgroundIndexBuffer);
-  gl.drawElements(gl.TRIANGLE_STRIP, 4, gl.UNSIGNED_INT, 0);
+// Set color
+function setColor(color) {
+  gl.uniform3f(colorLocation, color.r, color.g, color.b);
 }
 
 // Exports
-export { loadTexture, clearScreen, drawTiles, drawBackground, mainIndex, nextIndex };
+export {
+  loadTexture,
+  Mesh,
+  Tiles,
+  clearScreen,
+  setTexture,
+  setColor
+};
