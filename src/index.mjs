@@ -10,12 +10,12 @@ const tileTexture = render.loadTexture(tileImage);
 
 // Meshes
 const backgroundSprite = new render.Sprite(util.worldSize);
-const mainTiles = new render.Tiles({ w: 10, h: 20 });
-const nextTiles = new render.Tiles({ w: 4, h: 2 });
+const mainTiles = new render.Tiles({ x: 10, y: 20 });
+const nextTiles = new render.Tiles({ x: 4, y: 2 });
 
 // State
 let updateTime = 0;
-const tiles = Array(mainTiles.size.w).fill().map(() => []);
+const tiles = Array(mainTiles.size.x).fill().map(() => []);
 
 // Game loop
 window.requestAnimationFrame(function loop(time) {
@@ -27,8 +27,8 @@ window.requestAnimationFrame(function loop(time) {
 
   // Random colors for each tile every 0.5 seconds
   for (; time > updateTime; updateTime += 0.5) {
-    for (let x = 0; x < mainTiles.size.w; x++) {
-      for (let y = 0; y < mainTiles.size.h; y++) {
+    for (let x = 0; x < mainTiles.size.x; x++) {
+      for (let y = 0; y < mainTiles.size.y; y++) {
         if (Math.random() < 0.5) {
           const keys = Object.keys(util.colors);
           tiles[x][y] = keys[Math.floor(keys.length * Math.random())];
@@ -49,11 +49,15 @@ window.requestAnimationFrame(function loop(time) {
   backgroundSprite.render();
 
   // 1 draw call for every color of the main tiles
+  render.setTranslate({
+    x: -util.worldSize.x / 2 + mainTiles.size.x / 2 + 1,
+    y: 0
+  });
   render.setTexture(tileTexture);
   for (const color in util.colors) {
     const colorTiles = [];
-    for (let x = 0; x < mainTiles.size.w; x++) {
-      for (let y = 0; y < mainTiles.size.h; y++) {
+    for (let x = 0; x < mainTiles.size.x; x++) {
+      for (let y = 0; y < mainTiles.size.y; y++) {
         if (tiles[x][y] == color) {
           colorTiles.push({ x: x, y: y });
         }
@@ -65,14 +69,14 @@ window.requestAnimationFrame(function loop(time) {
 
   // Draw next tiles
   render.setTranslate({
-    x: mainTiles.size.w / 2 + nextTiles.size.w / 2 + 1,
-    y: mainTiles.size.h / 2 - nextTiles.size.h / 2,
+    x: util.worldSize.x / 2 - nextTiles.size.x / 2 - 0.5,
+    y: util.worldSize.y / 2 - nextTiles.size.y / 2 - 1,
   });
   render.setColor(util.colors.green);
   nextTiles.render([
     { x: 0, y: 0 },
     { x: 1, y: 0 },
     { x: 1, y: 1 },
-    { x: 2, y: 1 }
+    { x: 2, y: 1 },
   ]);
 });

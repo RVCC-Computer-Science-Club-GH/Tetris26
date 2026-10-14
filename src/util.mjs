@@ -18,7 +18,7 @@ const colors = {
 };
 
 // World size
-const worldSize = { w: 22, h: 22 };
+const worldSize = { x: 17, y: 22 };
 
 // Exports
 export {

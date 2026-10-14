@@ -53,8 +53,8 @@ window.addEventListener("resize", (event) => {
   canvas.height = pixelRatio * event.target.innerHeight;
   gl.viewport(0, 0, canvas.width, canvas.height);
   const minDimension = 2 * Math.min(
-    canvas.width / util.worldSize.w,
-    canvas.height / util.worldSize.h
+    canvas.width / util.worldSize.x,
+    canvas.height / util.worldSize.y
   );
   gl.uniform2f(
     scaleLocation,
@@ -114,10 +114,10 @@ class Sprite extends Mesh {
   constructor(size) {
     super(
       [
-        size.w / 2, size.h / 2, 1, 0,
-        size.w / 2, -size.h / 2, 1, 1,
-        -size.w / 2, size.h / 2, 0, 0,
-        -size.w / 2, -size.h / 2, 0, 1,
+        size.x / 2, size.y / 2, 1, 0,
+        size.x / 2, -size.y / 2, 1, 1,
+        -size.x / 2, size.y / 2, 0, 0,
+        -size.x / 2, -size.y / 2, 0, 1,
       ],
       [0, 1, 2, 1, 2, 3]
     );
@@ -130,8 +130,8 @@ class Tiles extends Mesh {
   constructor(size) {
     // Generate vertices
     const vertices = [];
-    for (let y = -size.h / 2; y < size.h / 2; y++) {
-      for (let x = -size.w / 2; x < size.w / 2; x++) {
+    for (let y = -size.y / 2; y < size.y / 2; y++) {
+      for (let x = -size.x / 2; x < size.x / 2; x++) {
         vertices.push(x + 1, y + 1, 1, 0);
         vertices.push(x + 1, y, 1, 1);
         vertices.push(x, y + 1, 0, 0);
@@ -152,10 +152,10 @@ class Tiles extends Mesh {
       if (!Number.isInteger(tile.x) || !Number.isInteger(tile.y)) {
         throw new util.AlertError("Non-integer tile position");
       }
-      if (tile.x < 0 || tile.x >= this.size.w || tile.y < 0 || tile.y >= this.size.h) {
+      if (tile.x < 0 || tile.x >= this.size.x || tile.y < 0 || tile.y >= this.size.y) {
         throw new util.AlertError("Out of bounds tile position");
       }
-      const index = 4 * (tile.y * this.size.w + tile.x);
+      const index = 4 * (tile.y * this.size.x + tile.x);
       indices.push(index, index + 1, index + 2);
       indices.push(index + 1, index + 2, index + 3);
     }
