@@ -41,6 +41,7 @@ gl.deleteProgram(program);
 
 // Locations
 const scaleLocation = gl.getUniformLocation(program, "scale");
+const translateLocation = gl.getUniformLocation(program, "translate");
 const positionLocation = gl.getAttribLocation(program, "positionIn");
 const uvLocation = gl.getAttribLocation(program, "uvIn");
 const colorLocation = gl.getUniformLocation(program, "color");
@@ -110,13 +111,13 @@ class Mesh {
 // Sprite class
 class Sprite extends Mesh {
   // Constructor
-  constructor(pos, size) {
+  constructor(size) {
     super(
       [
-        pos.x + size.w, pos.y + size.h, 1, 0,
-        pos.x + size.w, pos.y, 1, 1,
-        pos.x, pos.y + size.h, 0, 0,
-        pos.x, pos.y, 0, 1,
+        size.w / 2, size.h / 2, 1, 0,
+        size.w / 2, -size.h / 2, 1, 1,
+        -size.w / 2, size.h / 2, 0, 0,
+        -size.w / 2, -size.h / 2, 0, 1,
       ],
       [0, 1, 2, 1, 2, 3]
     );
@@ -126,11 +127,11 @@ class Sprite extends Mesh {
 // Tiles class
 class Tiles extends Mesh {
   // Constructor
-  constructor(pos, size) {
+  constructor(size) {
     // Generate vertices
     const vertices = [];
-    for (let y = pos.y; y < pos.y + size.h; y++) {
-      for (let x = pos.x; x < pos.x + size.w; x++) {
+    for (let y = -size.h / 2; y < size.h / 2; y++) {
+      for (let x = -size.w / 2; x < size.w / 2; x++) {
         vertices.push(x + 1, y + 1, 1, 0);
         vertices.push(x + 1, y, 1, 1);
         vertices.push(x, y + 1, 0, 0);
@@ -182,6 +183,11 @@ function setColor(color) {
   gl.uniform3f(colorLocation, color.r, color.g, color.b);
 }
 
+// Set translate
+function setTranslate(translate) {
+  gl.uniform2f(translateLocation, translate.x, translate.y);
+}
+
 // Exports
 export {
   loadTexture,
@@ -189,5 +195,6 @@ export {
   Tiles,
   clearScreen,
   setTexture,
-  setColor
+  setColor,
+  setTranslate
 };
