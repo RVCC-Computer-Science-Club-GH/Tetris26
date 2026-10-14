@@ -52,8 +52,8 @@ window.addEventListener("resize", (event) => {
   canvas.height = pixelRatio * event.target.innerHeight;
   gl.viewport(0, 0, canvas.width, canvas.height);
   const minDimension = 2 * Math.min(
-    canvas.width / util.worldWidth,
-    canvas.height / util.worldHeight
+    canvas.width / util.worldSize.w,
+    canvas.height / util.worldSize.h
   );
   gl.uniform2f(
     scaleLocation,

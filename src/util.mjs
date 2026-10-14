@@ -17,22 +17,12 @@ const colors = {
   orange: { r: 0xFF / 255, g: 0x80 / 255, b: 0x00 / 255 }
 };
 
-// Dimensions
-const worldWidth = 22;
-const worldHeight = 22;
-const mainWidth = 10;
-const mainHeight = 20;
-const nextWidth = 4;
-const nextHeight = 2;
+// World size
+const worldSize = { w: 22, h: 22 };
 
 // Exports
 export {
   AlertError,
   colors,
-  worldWidth,
-  worldHeight,
-  mainWidth,
-  mainHeight,
-  nextWidth,
-  nextHeight
+  worldSize
 };
