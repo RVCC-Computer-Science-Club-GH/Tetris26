@@ -6,7 +6,7 @@ import fragSource from "./frag.glsl";
 // WebGL context
 const gl = canvas.getContext("webgl2", { antialias: true });
 if (gl === null) {
-  throw new util.AlertError("Failed to get WebGL context");
+  throw new util.AlertError("Failed to get WebGL 2 context");
 }
 
 // Blending
@@ -88,9 +88,9 @@ class Mesh {
     // Vertex buffer
     const vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 16, 0);
+    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 4 * 4, 4 * 0);
     gl.enableVertexAttribArray(positionLocation);
-    gl.vertexAttribPointer(uvLocation, 2, gl.FLOAT, false, 16, 8);
+    gl.vertexAttribPointer(uvLocation, 2, gl.FLOAT, false, 4 * 4, 4 * 2);
     gl.enableVertexAttribArray(uvLocation);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
@@ -144,16 +144,13 @@ class Tiles extends Mesh {
     this.size = size;
   }
 
-  // Render
-  render(tiles) {
+  // Set tiles to render
+  set tiles(tiles) {
     // Generate indices
     const indices = [];
     for (const tile of tiles) {
-      if (!Number.isInteger(tile.x) || !Number.isInteger(tile.y)) {
-        throw new util.AlertError("Non-integer tile position");
-      }
       if (tile.x < 0 || tile.x >= this.size.x || tile.y < 0 || tile.y >= this.size.y) {
-        throw new util.AlertError("Out of bounds tile position");
+        throw new Error("Out of bounds tile position");
       }
       const index = 4 * (tile.y * this.size.x + tile.x);
       indices.push(index, index + 1, index + 2);
@@ -161,10 +158,9 @@ class Tiles extends Mesh {
     }
     this.vertexCount = indices.length;
 
-    // Buffer indices and draw
+    // Buffer indices
     gl.bindVertexArray(this.vertexArray);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(indices), gl.DYNAMIC_DRAW);
-    gl.drawElements(gl.TRIANGLES, this.vertexCount, gl.UNSIGNED_INT, 0);
   }
 }
 

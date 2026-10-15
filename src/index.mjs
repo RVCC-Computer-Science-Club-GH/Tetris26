@@ -12,6 +12,12 @@ const tileTexture = render.loadTexture(tileImage);
 const backgroundSprite = new render.Sprite(util.worldSize);
 const mainTiles = new render.Tiles({ x: 10, y: 20 });
 const nextTiles = new render.Tiles({ x: 4, y: 2 });
+nextTiles.tiles = [
+  { x: 0, y: 0 },
+  { x: 1, y: 0 },
+  { x: 1, y: 1 },
+  { x: 2, y: 1 },
+];
 
 // State
 let updateTime = 0;
@@ -64,7 +70,8 @@ window.requestAnimationFrame(function loop(time) {
       }
     }
     render.setColor(util.colors[color]);
-    mainTiles.render(colorTiles);
+    mainTiles.tiles = colorTiles;
+    mainTiles.render();
   }
 
   // Draw next tiles
@@ -73,10 +80,5 @@ window.requestAnimationFrame(function loop(time) {
     y: util.worldSize.y / 2 - nextTiles.size.y / 2 - 1,
   });
   render.setColor(util.colors.green);
-  nextTiles.render([
-    { x: 0, y: 0 },
-    { x: 1, y: 0 },
-    { x: 1, y: 1 },
-    { x: 2, y: 1 },
-  ]);
+  nextTiles.render();
 });
