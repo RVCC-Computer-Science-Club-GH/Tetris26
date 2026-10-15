@@ -5,7 +5,7 @@ import fragSource from "./frag.glsl";
 
 // WebGL context
 const gl = canvas.getContext("webgl2", { antialias: true });
-if (gl === null) {
+if (gl == null) {
   throw new util.AlertError("Failed to get WebGL 2 context");
 }
 

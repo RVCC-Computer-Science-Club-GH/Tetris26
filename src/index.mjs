@@ -20,8 +20,9 @@ nextTilesMesh.tiles = [
 ];
 
 // State
-let updateTimer = new util.Timer(0, 0.5, true);
 const tiles = Array(mainTilesMesh.size.x).fill().map(() => []);
+let resetTimer = new util.Timer(-2, 2, true);
+let gravityTimer = new util.Timer(0, 0.1, true);
 
 // Game loop
 window.requestAnimationFrame(function loop(time) {
@@ -31,15 +32,27 @@ window.requestAnimationFrame(function loop(time) {
   // Time in seconds
   time *= 0.001;
 
-  // Random colors for each tile every 0.5 seconds
-  if (updateTimer.tick(time)) {
+  // Reset to random colors
+  while (resetTimer.tick(time)) {
     for (let x = 0; x < mainTilesMesh.size.x; x++) {
       for (let y = 0; y < mainTilesMesh.size.y; y++) {
-        if (Math.random() < 0.5) {
+        if (Math.random() < 0.4) {
           const keys = Object.keys(util.colors);
           tiles[x][y] = keys[Math.floor(keys.length * Math.random())];
         } else {
-          tiles[x][y] = null;
+          tiles[x][y] = undefined;
+        }
+      }
+    }
+  }
+
+  // Gravity
+  while (gravityTimer.tick(time)) {
+    for (let x = 0; x < mainTilesMesh.size.x; x++) {
+      for (let y = 1; y < mainTilesMesh.size.y; y++) {
+        if (tiles[x][y - 1] == null) {
+          tiles[x][y - 1] = tiles[x][y];
+          tiles[x][y] = undefined;
         }
       }
     }
