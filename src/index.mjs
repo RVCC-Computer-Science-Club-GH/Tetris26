@@ -20,7 +20,7 @@ nextTilesMesh.tiles = [
 ];
 
 // State
-let updateTime = 0;
+let updateTimer = new util.Timer(0, 0.5, true);
 const tiles = Array(mainTilesMesh.size.x).fill().map(() => []);
 
 // Game loop
@@ -32,7 +32,7 @@ window.requestAnimationFrame(function loop(time) {
   time *= 0.001;
 
   // Random colors for each tile every 0.5 seconds
-  for (; time > updateTime; updateTime += 0.5) {
+  if (updateTimer.tick(time)) {
     for (let x = 0; x < mainTilesMesh.size.x; x++) {
       for (let y = 0; y < mainTilesMesh.size.y; y++) {
         if (Math.random() < 0.5) {

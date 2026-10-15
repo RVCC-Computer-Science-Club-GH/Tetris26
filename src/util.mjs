@@ -20,9 +20,38 @@ const colors = {
 // World size
 const worldSize = { x: 17, y: 22 };
 
+// Timer class
+class Timer {
+  // Constructor
+  constructor(time, duration, reset) {
+    this.time = time + duration;
+    this.duration = duration;
+    this.reset = reset;
+  }
+
+  // Tick
+  tick(time) {
+    let finished = time > this.time;
+    if (finished) {
+      if (this.reset) {
+        this.time += this.duration;
+      } else {
+        this.time = Infinity;
+      }
+    }
+    return finished;
+  }
+
+  // Reset
+  reset(time) {
+    this.time = time + this.duration;
+  }
+}
+
 // Exports
 export {
   AlertError,
   colors,
-  worldSize
+  worldSize,
+  Timer
 };
