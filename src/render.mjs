@@ -108,8 +108,8 @@ class Mesh {
   }
 }
 
-// Sprite class
-class Sprite extends Mesh {
+// Sprite mesh class
+class SpriteMesh extends Mesh {
   // Constructor
   constructor(size) {
     super(
@@ -124,8 +124,8 @@ class Sprite extends Mesh {
   }
 }
 
-// Tiles class
-class Tiles extends Mesh {
+// Tiles mesh class
+class TilesMesh extends Mesh {
   // Constructor
   constructor(size) {
     // Generate vertices
@@ -187,8 +187,8 @@ function setTranslate(translate) {
 // Exports
 export {
   loadTexture,
-  Sprite,
-  Tiles,
+  SpriteMesh,
+  TilesMesh,
   clearScreen,
   setTexture,
   setColor,
