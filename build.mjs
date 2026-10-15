@@ -49,7 +49,7 @@ fs.rmSync("public", { force: true, recursive: true });
 
 // Serve or build
 if (args.dev) {
-  console.log("Open https://localhost:8000");
+  console.log("Open http://localhost:8000");
   console.log("Reload page to trigger rebuild");
   const ctx = await esbuild.context(options);
   await ctx.serve({ servedir: "public" });
