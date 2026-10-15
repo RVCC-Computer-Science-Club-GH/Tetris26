@@ -1,7 +1,5 @@
 // Imports
 import * as util from "./util.mjs";
-import vertSource from "./vert.glsl";
-import fragSource from "./frag.glsl";
 
 // WebGL context
 const gl = canvas.getContext("webgl2", { antialias: true });
@@ -23,7 +21,9 @@ function compileShader(type, source) {
   }
   return shader;
 }
+import vertSource from "./shaders/transformVert.glsl";
 const vertShader = compileShader(gl.VERTEX_SHADER, vertSource);
+import fragSource from "./shaders/pixelArtFrag.glsl";
 const fragShader = compileShader(gl.FRAGMENT_SHADER, fragSource);
 
 // Shader linking
@@ -42,7 +42,7 @@ gl.deleteProgram(program);
 // Locations
 const scaleLocation = gl.getUniformLocation(program, "scale");
 const translateLocation = gl.getUniformLocation(program, "translate");
-const positionLocation = gl.getAttribLocation(program, "positionIn");
+const posLocation = gl.getAttribLocation(program, "posIn");
 const uvLocation = gl.getAttribLocation(program, "uvIn");
 const colorLocation = gl.getUniformLocation(program, "color");
 
@@ -88,8 +88,8 @@ class Mesh {
     // Vertex buffer
     const vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 4 * 4, 4 * 0);
-    gl.enableVertexAttribArray(positionLocation);
+    gl.vertexAttribPointer(posLocation, 2, gl.FLOAT, false, 4 * 4, 4 * 0);
+    gl.enableVertexAttribArray(posLocation);
     gl.vertexAttribPointer(uvLocation, 2, gl.FLOAT, false, 4 * 4, 4 * 2);
     gl.enableVertexAttribArray(uvLocation);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
