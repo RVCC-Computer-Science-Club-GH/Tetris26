@@ -6,15 +6,35 @@ class AlertError extends Error {
   }
 }
 
+// Color class
+class Color {
+  constructor(colorCode) {
+    this.r = (colorCode >> 8 * 2) / 255;
+    this.g = (colorCode >> 8 & 0xFF) / 255;
+    this.b = (colorCode & 0xFF) / 255;
+  }
+}
+
 // Colors
-const colors = new Map([
-  ["cyan", { r: 0x00 / 255, g: 0xFF / 255, b: 0xFF / 255 }],
-  ["yellow", { r: 0xFF / 255, g: 0xFF / 255, b: 0x00 / 255 }],
-  ["purple", { r: 0xFF / 255, g: 0x00 / 255, b: 0xFF / 255 }],
-  ["green", { r: 0x00 / 255, g: 0xFF / 255, b: 0x00 / 255 }],
-  ["red", { r: 0xFF / 255, g: 0x00 / 255, b: 0x00 / 255 }],
-  ["blue", { r: 0x00 / 255, g: 0x00 / 255, b: 0xFF / 255 }],
-  ["orange", { r: 0xFF / 255, g: 0x80 / 255, b: 0x00 / 255 }],
+const colors = {
+  white: new Color(0xFFFFFF),
+  black: new Color(0x000000),
+  cyan: new Color(0x00FFFF),
+  yellow: new Color(0xFFFF00),
+  purple: new Color(0xFF00FF),
+  green: new Color(0x00FF00),
+  red: new Color(0xFF0000),
+  blue: new Color(0x0000FF),
+  orange: new Color(0xFF8000),
+};
+const tileColors = new Map([
+  ["cyan", cyan],
+  ["yellow", yellow],
+  ["purple", purple],
+  ["green", green],
+  ["red", red],
+  ["blue", blue],
+  ["orange", orange],
 ]);
 
 // World size
@@ -52,6 +72,7 @@ class Timer {
 export {
   AlertError,
   colors,
+  tileColors,
   worldSize,
   Timer
 };

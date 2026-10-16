@@ -49,7 +49,7 @@ window.requestAnimationFrame(function loop(time) {
     for (let x = 0; x < mainTilesMesh.size.x; x++) {
       for (let y = 0; y < mainTilesMesh.size.y; y++) {
         if (Math.random() < 0.75 * y / mainTilesMesh.size.y) {
-          const values = [...util.colors.values()];
+          const values = [...util.tileColors.values()];
           tiles[x][y] = {
             color: values[Math.floor(values.length * Math.random())],
           };
@@ -65,7 +65,7 @@ window.requestAnimationFrame(function loop(time) {
 
   // Draw background
   render.setTranslate({ x: 0, y: 0 });
-  render.setColor({ r: 1, g: 1, b: 1 });
+  render.setColor(util.colors.white);
   render.setTexture(backgroundTexture);
   backgroundSpriteMesh.render();
 
@@ -75,7 +75,7 @@ window.requestAnimationFrame(function loop(time) {
     y: 0
   });
   render.setTexture(tileTexture);
-  for (const color of util.colors.values()) {
+  for (const color of util.tileColors.values()) {
     const colorTiles = new Set;
     for (let x = 0; x < mainTilesMesh.size.x; x++) {
       for (let y = 0; y < mainTilesMesh.size.y; y++) {
@@ -94,6 +94,6 @@ window.requestAnimationFrame(function loop(time) {
     x: util.worldSize.x / 2 - nextTilesMesh.size.x / 2 - 0.5,
     y: util.worldSize.y / 2 - nextTilesMesh.size.y / 2 - 1,
   });
-  render.setColor(util.colors.get("green"));
+  render.setColor(util.colors.green);
   nextTilesMesh.render();
 });
