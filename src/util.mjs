@@ -28,13 +28,13 @@ const colors = {
   orange: new Color(0xFF8000),
 };
 const tileColors = new Map([
-  ["cyan", cyan],
-  ["yellow", yellow],
-  ["purple", purple],
-  ["green", green],
-  ["red", red],
-  ["blue", blue],
-  ["orange", orange],
+  ["cyan", colors.cyan],
+  ["yellow", colors.yellow],
+  ["purple", colors.purple],
+  ["green", colors.green],
+  ["red", colors.red],
+  ["blue", colors.blue],
+  ["orange", colors.orange],
 ]);
 
 // World size
