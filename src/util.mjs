@@ -7,15 +7,15 @@ class AlertError extends Error {
 }
 
 // Colors
-const colors = {
-  cyan: { r: 0x00 / 255, g: 0xFF / 255, b: 0xFF / 255 },
-  yellow: { r: 0xFF / 255, g: 0xFF / 255, b: 0x00 / 255 },
-  purple: { r: 0xFF / 255, g: 0x00 / 255, b: 0xFF / 255 },
-  green: { r: 0x00 / 255, g: 0xFF / 255, b: 0x00 / 255 },
-  red: { r: 0xFF / 255, g: 0x00 / 255, b: 0x00 / 255 },
-  blue: { r: 0x00 / 255, g: 0x00 / 255, b: 0xFF / 255 },
-  orange: { r: 0xFF / 255, g: 0x80 / 255, b: 0x00 / 255 }
-};
+const colors = new Map([
+  ["cyan", { r: 0x00 / 255, g: 0xFF / 255, b: 0xFF / 255 }],
+  ["yellow", { r: 0xFF / 255, g: 0xFF / 255, b: 0x00 / 255 }],
+  ["purple", { r: 0xFF / 255, g: 0x00 / 255, b: 0xFF / 255 }],
+  ["green", { r: 0x00 / 255, g: 0xFF / 255, b: 0x00 / 255 }],
+  ["red", { r: 0xFF / 255, g: 0x00 / 255, b: 0x00 / 255 }],
+  ["blue", { r: 0x00 / 255, g: 0x00 / 255, b: 0xFF / 255 }],
+  ["orange", { r: 0xFF / 255, g: 0x80 / 255, b: 0x00 / 255 }],
+]);
 
 // World size
 const worldSize = { x: 17, y: 22 };

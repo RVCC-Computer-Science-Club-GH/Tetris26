@@ -12,12 +12,12 @@ const tileTexture = render.loadTexture(tileImage);
 const backgroundSpriteMesh = new render.SpriteMesh(util.worldSize);
 const mainTilesMesh = new render.TilesMesh({ x: 10, y: 20 });
 const nextTilesMesh = new render.TilesMesh({ x: 4, y: 2 });
-nextTilesMesh.tiles = [
+nextTilesMesh.tiles = new Set([
   { x: 0, y: 0 },
   { x: 1, y: 0 },
   { x: 1, y: 1 },
   { x: 2, y: 1 },
-];
+]);
 
 // State
 const tiles = Array(mainTilesMesh.size.x).fill().map(() => []);
@@ -49,8 +49,10 @@ window.requestAnimationFrame(function loop(time) {
     for (let x = 0; x < mainTilesMesh.size.x; x++) {
       for (let y = 0; y < mainTilesMesh.size.y; y++) {
         if (Math.random() < 0.75 * y / mainTilesMesh.size.y) {
-          const keys = Object.keys(util.colors);
-          tiles[x][y] = keys[Math.floor(keys.length * Math.random())];
+          const values = [...util.colors.values()];
+          tiles[x][y] = {
+            color: values[Math.floor(values.length * Math.random())],
+          };
         } else {
           tiles[x][y] = undefined;
         }
@@ -73,16 +75,16 @@ window.requestAnimationFrame(function loop(time) {
     y: 0
   });
   render.setTexture(tileTexture);
-  for (const color in util.colors) {
-    const colorTiles = [];
+  for (const color of util.colors.values()) {
+    const colorTiles = new Set;
     for (let x = 0; x < mainTilesMesh.size.x; x++) {
       for (let y = 0; y < mainTilesMesh.size.y; y++) {
-        if (tiles[x][y] == color) {
-          colorTiles.push({ x: x, y: y });
+        if (tiles[x][y] && tiles[x][y].color == color) {
+          colorTiles.add({ x: x, y: y });
         }
       }
     }
-    render.setColor(util.colors[color]);
+    render.setColor(color);
     mainTilesMesh.tiles = colorTiles;
     mainTilesMesh.render();
   }
@@ -92,6 +94,6 @@ window.requestAnimationFrame(function loop(time) {
     x: util.worldSize.x / 2 - nextTilesMesh.size.x / 2 - 0.5,
     y: util.worldSize.y / 2 - nextTilesMesh.size.y / 2 - 1,
   });
-  render.setColor(util.colors.green);
+  render.setColor(util.colors.get("green"));
   nextTilesMesh.render();
 });

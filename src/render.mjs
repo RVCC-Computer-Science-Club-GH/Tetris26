@@ -148,7 +148,7 @@ class TilesMesh extends Mesh {
   set tiles(tiles) {
     // Generate indices
     const indices = [];
-    for (const tile of tiles) {
+    for (const tile of tiles.values()) {
       if (tile.x < 0 || tile.x >= this.size.x || tile.y < 0 || tile.y >= this.size.y) {
         throw new Error("Out of bounds tile position");
       }
