@@ -162,7 +162,7 @@ export class TilesMesh extends Mesh {
     const indices = [];
     for (const tile of tiles.values()) {
       if (tile.x < 0 || tile.x >= this.#size.x || tile.y < 0 || tile.y >= this.#size.y) {
-        throw new Error("Out of bounds tile position");
+        throw new Error("Out of bounds tile mesh position");
       }
       const index = 4 * (tile.y * this.#size.x + tile.x);
       indices.push(index, index + 1, index + 2);
