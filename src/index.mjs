@@ -81,19 +81,10 @@ window.requestAnimationFrame(function loop(time) {
   render.setTexture(backgroundTexture);
   backgroundSpriteMesh.render();
 
-  // 1 draw call for every color of the main tiles
+  // Draw main tiles
   render.setTranslate(mainTilesTranslate);
   render.setTexture(tileTexture);
-  for (const color of util.tileColors.values()) {
-    const colorTiles = new Set;
-    for (let x = 0; x < tiles.size.x; x++) {
-      for (let y = 0; y < tiles.size.y; y++) {
-        const current = tiles.index({ x: x, y: y });
-        if (tiles.tiles[current] && tiles.tiles[current].color == color) {
-          colorTiles.add({ x: x, y: y });
-        }
-      }
-    }
+  for (const { color, tiles: colorTiles } of tiles.render()) {
     render.setColor(color);
     mainTilesMesh.tiles = colorTiles;
     mainTilesMesh.render();
