@@ -1,5 +1,5 @@
 // Error class that also shows an alert
-class AlertError extends Error {
+export class AlertError extends Error {
   constructor(message) {
     alert(message);
     super(message);
@@ -7,7 +7,8 @@ class AlertError extends Error {
 }
 
 // Color class
-class Color {
+export class Color {
+  // Constructor from hex color code
   constructor(colorCode) {
     this.r = (colorCode >> 8 * 2) / 255;
     this.g = (colorCode >> 8 & 0xFF) / 255;
@@ -16,7 +17,7 @@ class Color {
 }
 
 // Colors
-const colors = {
+export const colors = {
   white: new Color(0xFFFFFF),
   black: new Color(0x000000),
   cyan: new Color(0x00FFFF),
@@ -27,7 +28,7 @@ const colors = {
   blue: new Color(0x0000FF),
   orange: new Color(0xFF8000),
 };
-const tileColors = new Map([
+export const tileColors = new Map([
   ["cyan", colors.cyan],
   ["yellow", colors.yellow],
   ["purple", colors.purple],
@@ -38,10 +39,10 @@ const tileColors = new Map([
 ]);
 
 // World size
-const worldSize = { x: 17, y: 22 };
+export const worldSize = { x: 17, y: 22 };
 
 // Timer class
-class Timer {
+export class Timer {
   // Constructor
   constructor(time, duration, reset) {
     this.time = time + duration;
@@ -67,12 +68,3 @@ class Timer {
     this.time = time + this.duration;
   }
 }
-
-// Exports
-export {
-  AlertError,
-  colors,
-  tileColors,
-  worldSize,
-  Timer
-};

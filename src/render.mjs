@@ -65,7 +65,7 @@ window.addEventListener("resize", (event) => {
 window.dispatchEvent(new Event("resize"));
 
 // Texture loading
-function loadTexture(url) {
+export function loadTexture(url) {
   const image = new Image;
   const texture = gl.createTexture();
   image.addEventListener("load", () => {
@@ -78,7 +78,7 @@ function loadTexture(url) {
 }
 
 // Mesh class
-class Mesh {
+export class Mesh {
   // Constructor
   constructor(vertices, indices) {
     // Vertex array
@@ -109,7 +109,7 @@ class Mesh {
 }
 
 // Sprite mesh class
-class SpriteMesh extends Mesh {
+export class SpriteMesh extends Mesh {
   // Constructor
   constructor(size) {
     super(
@@ -125,7 +125,7 @@ class SpriteMesh extends Mesh {
 }
 
 // Tiles mesh class
-class TilesMesh extends Mesh {
+export class TilesMesh extends Mesh {
   // Constructor
   constructor(size) {
     // Generate vertices
@@ -165,32 +165,21 @@ class TilesMesh extends Mesh {
 }
 
 // Clear the screen
-function clearScreen() {
+export function clearScreen() {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 }
 
 // Set texture
-function setTexture(texture) {
+export function setTexture(texture) {
   gl.bindTexture(gl.TEXTURE_2D, texture);
 }
 
 // Set color
-function setColor(color) {
+export function setColor(color) {
   gl.uniform3f(colorLocation, color.r, color.g, color.b);
 }
 
 // Set translate
-function setTranslate(translate) {
+export function setTranslate(translate) {
   gl.uniform2f(translateLocation, translate.x, translate.y);
 }
-
-// Exports
-export {
-  loadTexture,
-  SpriteMesh,
-  TilesMesh,
-  clearScreen,
-  setTexture,
-  setColor,
-  setTranslate
-};
