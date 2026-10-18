@@ -79,11 +79,15 @@ export function loadTexture(url) {
 
 // Mesh class
 export class Mesh {
+  // Fields
+  _vertexArray;
+  _vertexCount;
+
   // Constructor
   constructor(vertices, indices) {
     // Vertex array
-    this.vertexArray = gl.createVertexArray();
-    gl.bindVertexArray(this.vertexArray);
+    this._vertexArray = gl.createVertexArray();
+    gl.bindVertexArray(this._vertexArray);
 
     // Vertex buffer
     const vertexBuffer = gl.createBuffer();
@@ -95,7 +99,7 @@ export class Mesh {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
     // Index Buffer
-    this.vertexCount = indices.length;
+    this._vertexCount = indices.length;
     const indexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(indices), gl.STATIC_DRAW);
@@ -103,8 +107,8 @@ export class Mesh {
 
   // Render
   render() {
-    gl.bindVertexArray(this.vertexArray);
-    gl.drawElements(gl.TRIANGLES, this.vertexCount, gl.UNSIGNED_INT, 0);
+    gl.bindVertexArray(this._vertexArray);
+    gl.drawElements(gl.TRIANGLES, this._vertexCount, gl.UNSIGNED_INT, 0);
   }
 }
 
@@ -126,6 +130,9 @@ export class SpriteMesh extends Mesh {
 
 // Tiles mesh class
 export class TilesMesh extends Mesh {
+  // Fields
+  #size;
+
   // Constructor
   constructor(size) {
     // Generate vertices
@@ -141,7 +148,12 @@ export class TilesMesh extends Mesh {
 
     // Mesh constructor
     super(vertices, []);
-    this.size = size;
+    this.#size = size;
+  }
+
+  // Get size
+  get size() {
+    return this.#size;
   }
 
   // Set tiles to render
@@ -149,17 +161,17 @@ export class TilesMesh extends Mesh {
     // Generate indices
     const indices = [];
     for (const tile of tiles.values()) {
-      if (tile.x < 0 || tile.x >= this.size.x || tile.y < 0 || tile.y >= this.size.y) {
+      if (tile.x < 0 || tile.x >= this.#size.x || tile.y < 0 || tile.y >= this.#size.y) {
         throw new Error("Out of bounds tile position");
       }
-      const index = 4 * (tile.y * this.size.x + tile.x);
+      const index = 4 * (tile.y * this.#size.x + tile.x);
       indices.push(index, index + 1, index + 2);
       indices.push(index + 1, index + 2, index + 3);
     }
-    this.vertexCount = indices.length;
+    this._vertexCount = indices.length;
 
     // Buffer indices
-    gl.bindVertexArray(this.vertexArray);
+    gl.bindVertexArray(this._vertexArray);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(indices), gl.DYNAMIC_DRAW);
   }
 }

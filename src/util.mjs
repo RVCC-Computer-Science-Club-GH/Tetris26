@@ -1,5 +1,6 @@
 // Error class that also shows an alert
 export class AlertError extends Error {
+  // Constructor
   constructor(message) {
     alert(message);
     super(message);
@@ -8,6 +9,11 @@ export class AlertError extends Error {
 
 // Color class
 export class Color {
+  // Fields
+  r;
+  g;
+  b;
+
   // Constructor from hex color code
   constructor(colorCode) {
     this.r = (colorCode >> 8 * 2) / 255;
@@ -43,21 +49,26 @@ export const worldSize = { x: 17, y: 22 };
 
 // Timer class
 export class Timer {
+  // Fields
+  #time;
+  duration;
+  resets;
+
   // Constructor
-  constructor(time, duration, reset) {
-    this.time = time + duration;
+  constructor(time, duration, resets) {
+    this.#time = time + duration;
     this.duration = duration;
-    this.reset = reset;
+    this.resets = resets;
   }
 
   // Tick
   tick(time) {
-    let finished = time > this.time;
+    let finished = time > this.#time;
     if (finished) {
-      if (this.reset) {
-        this.time += this.duration;
+      if (this.resets) {
+        this.#time += this.duration;
       } else {
-        this.time = Infinity;
+        this.#time = Infinity;
       }
     }
     return finished;
@@ -65,6 +76,6 @@ export class Timer {
 
   // Reset
   reset(time) {
-    this.time = time + this.duration;
+    this.#time = time + this.duration;
   }
 }
