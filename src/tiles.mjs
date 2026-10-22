@@ -30,6 +30,42 @@ export const tetrominos = new Map([
       { x: 1, y: 0 },
     ]
   }],
+  ["o", {
+    color: util.colors.yellow,
+    tiles: [
+      { x: 0, y: 0 },
+      { x: 0, y: 1 },
+      { x: 1, y: 0 },
+      { x: 1, y: 1 },
+    ]
+  }],
+  ["s", {
+    color: util.colors.green,
+    tiles: [
+      { x: 0, y: 1 },
+      { x: 1, y: 1 },
+      { x: 1, y: 0 },
+      { x: 2, y: 0 },
+    ]
+  }],
+  ["z", {
+    color: util.colors.red,
+    tiles: [
+      { x: -1, y: 0 },
+      { x: 0, y: 0 },
+      { x: 0, y: 1 },
+      { x: 1, y: 1 },
+    ]
+  }],
+  ["t", {
+    color: util.colors.purple,
+    tiles: [
+      { x: 0, y: 0 },
+      { x: 1, y: 0 },
+      { x: 1, y: 1 },
+      { x: 2, y: 0 },
+    ]
+  }],
 ]);
 
 // Tile class
@@ -91,8 +127,9 @@ export class Tiles {
   // Spawn a tetromino
   spawnTetromino(key) {
     const tetromino = tetrominos.get(key);
+    const x = Math.floor(6 * Math.random() - 3);
     for (const tile of tetromino.tiles) {
-      const current = this.#index({ x: this.#size.x / 2 - 1 + tile.x, y: this.#size.y - 1 - tile.y });
+      const current = this.#index({ x: this.#size.x / 2 - 1 + tile.x + x, y: this.#size.y - 1 - tile.y });
       this.tiles[current] = new Tile(tetromino.color);
     }
   }
