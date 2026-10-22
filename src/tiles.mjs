@@ -127,7 +127,7 @@ export class Tiles {
   // Spawn a tetromino
   spawnTetromino(key) {
     const tetromino = tetrominos.get(key);
-    const x = Math.floor(6 * Math.random() - 3);
+    const x = Math.round(6 * Math.random() - 3);
     for (const tile of tetromino.tiles) {
       const current = this.#index({ x: this.#size.x / 2 - 1 + tile.x + x, y: this.#size.y - 1 - tile.y });
       this.tiles[current] = new Tile(tetromino.color);
