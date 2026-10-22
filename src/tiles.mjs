@@ -47,7 +47,7 @@ export class Tiles {
       const tiles = new Set;
       for (let x = 0; x < this.#size.x; x++) {
         for (let y = 0; y < this.#size.y; y++) {
-          const current = this.#index({ x: x, y: y });
+          const current = this.#index({ x, y });
           if (this.tiles[current] && this.tiles[current].color == color) {
             tiles.add({ x, y });
           }

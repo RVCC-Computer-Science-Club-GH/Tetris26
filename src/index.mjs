@@ -45,8 +45,8 @@ window.requestAnimationFrame(function loop(time) {
   while (gravityTimer.tick(time)) {
     for (let x = 0; x < tiles.size.x; x++) {
       for (let y = 1; y < tiles.size.y; y++) {
-        const current = tiles.index({ x: x, y: y });
-        const below = tiles.index({ x: x, y: y - 1 });
+        const current = tiles.index({ x, y });
+        const below = tiles.index({ x, y: y - 1 });
         if (tiles.tiles[below] == null) {
           tiles.tiles[below] = tiles.tiles[current];
           tiles.tiles[current] = null;
@@ -59,7 +59,7 @@ window.requestAnimationFrame(function loop(time) {
   while (resetTimer.tick(time)) {
     for (let x = 0; x < tiles.size.x; x++) {
       for (let y = 0; y < tiles.size.y; y++) {
-        const current = tiles.index({ x: x, y: y });
+        const current = tiles.index({ x, y });
         if (Math.random() < 0.75 * y / tiles.size.y) {
           const values = [...util.tileColors.values()];
           tiles.tiles[current] = new _tiles.Tile(
