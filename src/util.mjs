@@ -63,7 +63,7 @@ export class Timer {
 
   // Tick
   tick(time) {
-    let finished = time > this.#time;
+    const finished = time > this.#time;
     if (finished) {
       if (this.resets) {
         this.#time += this.duration;

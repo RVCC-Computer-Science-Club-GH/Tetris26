@@ -1,6 +1,37 @@
 // Imports
 import * as util from "./util.mjs";
 
+// Tetrominos
+export const tetrominos = new Map([
+  ["i", {
+    color: util.colors.cyan,
+    tiles: [
+      { x: -1, y: 0 },
+      { x: 0, y: 0 },
+      { x: 1, y: 0 },
+      { x: 2, y: 0 },
+    ]
+  }],
+  ["j", {
+    color: util.colors.blue,
+    tiles: [
+      { x: 0, y: 0 },
+      { x: 0, y: 1 },
+      { x: 1, y: 1 },
+      { x: 2, y: 1 },
+    ]
+  }],
+  ["l", {
+    color: util.colors.orange,
+    tiles: [
+      { x: -1, y: 1 },
+      { x: 0, y: 1 },
+      { x: 1, y: 1 },
+      { x: 1, y: 0 },
+    ]
+  }],
+]);
+
 // Tile class
 export class Tile {
   // Fields
@@ -54,6 +85,15 @@ export class Tiles {
         }
       }
       yield { color: color, tiles: tiles };
+    }
+  }
+
+  // Spawn a tetromino
+  spawnTetromino(key) {
+    const tetromino = tetrominos.get(key);
+    for (const tile of tetromino.tiles) {
+      const current = this.#index({ x: this.#size.x / 2 - 1 + tile.x, y: this.#size.y - 1 - tile.y });
+      this.tiles[current] = new Tile(tetromino.color);
     }
   }
 }

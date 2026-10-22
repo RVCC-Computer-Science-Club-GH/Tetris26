@@ -11,8 +11,8 @@ const tileTexture = render.loadTexture(tileImage);
 
 // State
 const tiles = new _tiles.Tiles({ x: 10, y: 20 });
-let resetTimer = new util.Timer(-2, 2, true);
-let gravityTimer = new util.Timer(0, 0.1, true);
+const spawnTimer = new util.Timer(-2, 2, true);
+const gravityTimer = new util.Timer(0, 0.1, true);
 
 // Meshes
 const backgroundSpriteMesh = new render.SpriteMesh(util.worldSize);
@@ -55,21 +55,10 @@ window.requestAnimationFrame(function loop(time) {
     }
   }
 
-  // Reset to random colors
-  while (resetTimer.tick(time)) {
-    for (let x = 0; x < tiles.size.x; x++) {
-      for (let y = 0; y < tiles.size.y; y++) {
-        const current = tiles.index({ x, y });
-        if (Math.random() < 0.75 * y / tiles.size.y) {
-          const values = [...util.tileColors.values()];
-          tiles.tiles[current] = new _tiles.Tile(
-            values[Math.floor(values.length * Math.random())]
-          );
-        } else {
-          tiles.tiles[current] = null;
-        }
-      }
-    }
+  // Spawn a random tetronimo
+  while (spawnTimer.tick(time)) {
+    const keys = [..._tiles.tetrominos.keys()];
+    tiles.spawnTetromino(keys[Math.floor(keys.length * Math.random())]);
   }
 
   // Clear screen
