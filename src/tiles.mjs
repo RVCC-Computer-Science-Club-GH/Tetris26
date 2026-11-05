@@ -72,10 +72,12 @@ export const tetrominos = new Map([
 export class Tile {
   // Fields
   color;
+  _pos;
 
   // Constructor
-  constructor(color) {
+  constructor(color, pos) {
     this.color = color;
+    this._pos = pos;
   }
 }
 
@@ -116,7 +118,7 @@ export class Tiles {
         for (let y = 0; y < this.#size.y; y++) {
           const current = this.#index({ x, y });
           if (this.tiles[current] && this.tiles[current].color == color) {
-            tiles.add({ x, y });
+            tiles.add(this.tiles[current]._pos);
           }
         }
       }
@@ -128,9 +130,27 @@ export class Tiles {
   spawnTetromino(key) {
     const tetromino = tetrominos.get(key);
     const x = Math.round(6 * Math.random() - 3);
-    for (const tile of tetromino.tiles) {
-      const current = this.#index({ x: this.#size.x / 2 - 1 + tile.x + x, y: this.#size.y - 1 - tile.y });
-      this.tiles[current] = new Tile(tetromino.color);
+    for (const relPos of tetromino.tiles) {
+      const pos = {
+        x: this.#size.x / 2 - 1 + relPos.x + x,
+        y: this.#size.y - 1 - relPos.y
+      };
+      const current = this.#index(pos);
+      this.tiles[current] = new Tile(tetromino.color, pos);
+    }
+  }
+
+  gravity() {
+    for (let x = 0; x < this.#size.x; x++) {
+      for (let y = 1; y < this.#size.y; y++) {
+        const current = this.#index({ x, y });
+        const below = this.#index({ x, y: y - 1 });
+        if (this.tiles[current] != null && this.tiles[below] == null) {
+          this.tiles[below] = this.tiles[current];
+          this.tiles[current] = null;
+          this.tiles[below]._pos.y -= 1;
+        }
+      }
     }
   }
 }

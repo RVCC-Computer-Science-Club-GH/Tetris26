@@ -43,16 +43,7 @@ window.requestAnimationFrame(function loop(time) {
 
   // Gravity
   while (gravityTimer.tick(time)) {
-    for (let x = 0; x < tiles.size.x; x++) {
-      for (let y = 1; y < tiles.size.y; y++) {
-        const current = tiles.index({ x, y });
-        const below = tiles.index({ x, y: y - 1 });
-        if (tiles.tiles[below] == null) {
-          tiles.tiles[below] = tiles.tiles[current];
-          tiles.tiles[current] = null;
-        }
-      }
-    }
+    tiles.gravity();
   }
 
   // Spawn a random tetronimo
