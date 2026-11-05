@@ -1,6 +1,7 @@
 // Imports
 import * as render from "./render";
 import * as util from "./util";
+const vec2 = util.vec2;
 import * as _tiles from "./tiles";
 
 // Textures
@@ -10,27 +11,24 @@ import tileImage from "./assets/tile.webp";
 const tileTexture = render.loadTexture(tileImage);
 
 // State
-const tiles = new _tiles.Tiles({ x: 10, y: 20 });
+const tiles = new _tiles.Tiles(vec2(10, 20));
 const gravityTimer = new util.Timer(0, 0.1, true);
 
 // Meshes
 const backgroundSpriteMesh = new render.SpriteMesh(util.worldSize);
 const mainTilesMesh = new render.TilesMesh(tiles.size);
-const mainTilesTranslate = {
-  x: -util.worldSize.x / 2 + mainTilesMesh.size.x / 2 + 1,
-  y: 0,
-};
-const nextTilesMesh = new render.TilesMesh({ x: 4, y: 2 });
+const mainTilesTranslate = vec2(-util.worldSize.x / 2 + mainTilesMesh.size.x / 2 + 1, 0);
+const nextTilesMesh = new render.TilesMesh(vec2(4, 2));
 nextTilesMesh.tiles = new Set([
-  { x: 0, y: 0 },
-  { x: 1, y: 0 },
-  { x: 1, y: 1 },
-  { x: 2, y: 1 },
+  vec2(0, 0),
+  vec2(1, 0),
+  vec2(1, 1),
+  vec2(2, 1),
 ]);
-const nextTilesTranslate = {
-  x: util.worldSize.x / 2 - nextTilesMesh.size.x / 2 - 0.5,
-  y: util.worldSize.y / 2 - nextTilesMesh.size.y / 2 - 1,
-};
+const nextTilesTranslate = vec2(
+  util.worldSize.x / 2 - nextTilesMesh.size.x / 2 - 0.5,
+  util.worldSize.y / 2 - nextTilesMesh.size.y / 2 - 1
+);
 
 // Game loop
 window.requestAnimationFrame(function loop(time) {
@@ -55,7 +53,7 @@ window.requestAnimationFrame(function loop(time) {
   render.clearScreen();
 
   // Draw background
-  render.setTranslate({ x: 0, y: 0 });
+  render.setTranslate(vec2(0, 0));
   render.setColor(util.colors.white);
   render.setTexture(backgroundTexture);
   backgroundSpriteMesh.render();

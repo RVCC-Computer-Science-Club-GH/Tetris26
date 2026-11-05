@@ -44,8 +44,13 @@ export const tileColors = new Map([
   ["orange", colors.orange],
 ]);
 
+// 2D vector helper
+export function vec2(x, y) {
+  return { x, y };
+}
+
 // World size
-export const worldSize = { x: 17, y: 22 };
+export const worldSize = vec2(17, 22);
 
 // Timer class
 export class Timer {
