@@ -11,7 +11,6 @@ const tileTexture = render.loadTexture(tileImage);
 
 // State
 const tiles = new _tiles.Tiles({ x: 10, y: 20 });
-const spawnTimer = new util.Timer(-2, 2, true);
 const gravityTimer = new util.Timer(0, 0.1, true);
 
 // Meshes
@@ -47,7 +46,7 @@ window.requestAnimationFrame(function loop(time) {
   }
 
   // Spawn a random tetronimo
-  while (spawnTimer.tick(time)) {
+  if (tiles.active.length == 0) {
     const keys = [..._tiles.tetrominos.keys()];
     tiles.spawnTetromino(keys[Math.floor(keys.length * Math.random())]);
   }

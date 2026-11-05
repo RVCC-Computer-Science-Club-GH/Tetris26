@@ -15,10 +15,10 @@ export const tetrominos = new Map([
   ["j", {
     color: util.colors.blue,
     tiles: [
-      { x: 0, y: 0 },
       { x: 0, y: 1 },
       { x: 1, y: 1 },
       { x: 2, y: 1 },
+      { x: 0, y: 0 },
     ]
   }],
   ["l", {
@@ -33,10 +33,10 @@ export const tetrominos = new Map([
   ["o", {
     color: util.colors.yellow,
     tiles: [
-      { x: 0, y: 0 },
       { x: 0, y: 1 },
-      { x: 1, y: 0 },
       { x: 1, y: 1 },
+      { x: 0, y: 0 },
+      { x: 1, y: 0 },
     ]
   }],
   ["s", {
@@ -51,18 +51,18 @@ export const tetrominos = new Map([
   ["z", {
     color: util.colors.red,
     tiles: [
-      { x: -1, y: 0 },
-      { x: 0, y: 0 },
       { x: 0, y: 1 },
       { x: 1, y: 1 },
+      { x: -1, y: 0 },
+      { x: 0, y: 0 },
     ]
   }],
   ["t", {
     color: util.colors.purple,
     tiles: [
+      { x: 1, y: 1 },
       { x: 0, y: 0 },
       { x: 1, y: 0 },
-      { x: 1, y: 1 },
       { x: 2, y: 0 },
     ]
   }],
@@ -72,12 +72,12 @@ export const tetrominos = new Map([
 export class Tile {
   // Fields
   color;
-  _pos;
+  pos;
 
   // Constructor
   constructor(color, pos) {
     this.color = color;
-    this._pos = pos;
+    this.pos = pos;
   }
 }
 
@@ -86,11 +86,13 @@ export class Tiles {
   // Fields
   #size;
   tiles;
+  active;
 
   // Constructor
   constructor(size) {
     this.#size = size;
     this.tiles = Array(size.x * size.y);
+    this.active = [];
   }
 
   // Get size
@@ -118,7 +120,7 @@ export class Tiles {
         for (let y = 0; y < this.#size.y; y++) {
           const current = this.#index({ x, y });
           if (this.tiles[current] && this.tiles[current].color == color) {
-            tiles.add(this.tiles[current]._pos);
+            tiles.add(this.tiles[current].pos);
           }
         }
       }
@@ -130,27 +132,54 @@ export class Tiles {
   spawnTetromino(key) {
     const tetromino = tetrominos.get(key);
     const x = Math.round(6 * Math.random() - 3);
-    for (const relPos of tetromino.tiles) {
-      const pos = {
-        x: this.#size.x / 2 - 1 + relPos.x + x,
-        y: this.#size.y - 1 - relPos.y
-      };
-      const current = this.#index(pos);
-      this.tiles[current] = new Tile(tetromino.color, pos);
+    const positions = tetromino.tiles.map((pos) => {
+      return {
+        x: this.#size.x / 2 - 1 + pos.x + x,
+        y: this.#size.y - 1 - pos.y
+      }
+    });
+
+    let canSpawn = true;
+    for (const pos of positions) {
+      if (this.tiles[this.#index(pos)] != null) {
+        canSpawn = false;
+      }
+    }
+
+    if (canSpawn) {
+      for (const pos of positions) {
+        const tile = new Tile(tetromino.color, pos);
+        this.tiles[this.#index(pos)] = tile;
+        this.active.push(tile);
+      }
     }
   }
 
+  // Apply gravity to active tiles
   gravity() {
-    for (let x = 0; x < this.#size.x; x++) {
-      for (let y = 1; y < this.#size.y; y++) {
-        const current = this.#index({ x, y });
-        const below = this.#index({ x, y: y - 1 });
-        if (this.tiles[current] != null && this.tiles[below] == null) {
-          this.tiles[below] = this.tiles[current];
-          this.tiles[current] = null;
-          this.tiles[below]._pos.y -= 1;
+    let canFall = true;
+    for (const tile of this.active) {
+      try {
+        const below = this.tiles[this.index({ x: tile.pos.x, y: tile.pos.y - 1 })]
+        if (below != null && !this.active.find((otherTile) => below === otherTile)) {
+          canFall = false;
         }
+      } catch {
+        canFall = false;
       }
+    }
+
+    if (canFall) {
+      for (const tile of this.active) {
+        const current = this.#index(tile.pos);
+        const belowPos = { x: tile.pos.x, y: tile.pos.y - 1 };
+        const below = this.#index(belowPos);
+        this.tiles[below] = this.tiles[current];
+        this.tiles[current] = null;
+        this.tiles[below].pos = belowPos;
+      }
+    } else {
+      this.active = [];
     }
   }
 }
