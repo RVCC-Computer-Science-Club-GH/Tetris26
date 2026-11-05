@@ -5,6 +5,7 @@ import checkerPlugin from "vite-plugin-checker";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import { compression } from "vite-plugin-compression2";
 import glslPlugin from "vite-plugin-glsl";
+import faviconsPlugin from "@anolilab/unplugin-favicons/vite";
 
 // Config
 export default vite.defineConfig(({ mode }) => {
@@ -21,8 +22,9 @@ export default vite.defineConfig(({ mode }) => {
       checkerPlugin({ typescript: true }),
       viteStaticCopy({ targets: [{ src: "license.txt", dest: "" }] }),
       compression({ include: /\.(html|xml|css|json|js|mjs|cjs|svg|yaml|yml|toml|wasm)$/ }),
-      glslPlugin({ minify: mode !== "development" })
+      glslPlugin({ minify: mode !== "development" }),
+      faviconsPlugin({ icons: { favicons: { source: "src/assets/rvcc.png" } } })
     ]
-  }
+  };
 });
 

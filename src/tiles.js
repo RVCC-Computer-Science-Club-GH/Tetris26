@@ -136,7 +136,7 @@ export class Tiles {
       return {
         x: this.#size.x / 2 - 1 + pos.x + x,
         y: this.#size.y - 1 - pos.y
-      }
+      };
     });
 
     let canSpawn = true;
