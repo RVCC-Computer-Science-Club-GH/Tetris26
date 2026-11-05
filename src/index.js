@@ -1,7 +1,7 @@
 // Imports
-import * as render from "./render.mjs";
-import * as util from "./util.mjs";
-import * as _tiles from "./tiles.mjs";
+import * as render from "./render";
+import * as util from "./util";
+import * as _tiles from "./tiles";
 
 // Textures
 import backgroundImage from "./assets/background.webp";

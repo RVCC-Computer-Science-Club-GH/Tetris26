@@ -1,5 +1,5 @@
 // Imports
-import * as util from "./util.mjs";
+import * as util from "./util";
 
 // WebGL context
 const gl = canvas.getContext("webgl2", { antialias: true });

@@ -1,5 +1,5 @@
 // Imports
-import * as util from "./util.mjs";
+import * as util from "./util";
 
 // Tetrominos
 export const tetrominos = new Map([
