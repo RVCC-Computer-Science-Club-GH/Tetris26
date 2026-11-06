@@ -1,8 +1,12 @@
 // Imports
 import * as util from "./util";
+import { Vec2 } from "./util";
+
+// Elements
+const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 
 // WebGL context
-const gl = canvas.getContext("webgl2", { antialias: true });
+let gl = canvas.getContext("webgl2", { antialias: true }) as WebGL2RenderingContext;
 if (gl == null) {
   throw new util.AlertError("Failed to get WebGL 2 context");
 }
@@ -12,8 +16,8 @@ gl.enable(gl.BLEND);
 gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
 // Shader compilation
-function compileShader(type, source) {
-  const shader = gl.createShader(type);
+function compileShader(type: number, source: string) {
+  const shader = gl.createShader(type)!;
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
@@ -48,9 +52,10 @@ const colorLocation = gl.getUniformLocation(program, "color");
 
 // Resize canvas to fit page
 window.addEventListener("resize", (event) => {
-  const pixelRatio = event.target.devicePixelRatio;
-  canvas.width = pixelRatio * event.target.innerWidth;
-  canvas.height = pixelRatio * event.target.innerHeight;
+  const target = event.target as Window;
+  const pixelRatio = target.devicePixelRatio;
+  canvas.width = pixelRatio * target.innerWidth;
+  canvas.height = pixelRatio * target.innerHeight;
   gl.viewport(0, 0, canvas.width, canvas.height);
   const minDimension = 2 * Math.min(
     canvas.width / util.worldSize.x,
@@ -65,7 +70,7 @@ window.addEventListener("resize", (event) => {
 window.dispatchEvent(new Event("resize"));
 
 // Texture loading
-export function loadTexture(url) {
+export function loadTexture(url: string) {
   const image = new Image;
   const texture = gl.createTexture();
   image.addEventListener("load", () => {
@@ -80,14 +85,14 @@ export function loadTexture(url) {
 // Mesh class
 export class Mesh {
   // Fields
-  _vertexArray;
-  _vertexCount;
+  protected vertexArray: WebGLVertexArrayObject;
+  protected vertexCount: number;
 
   // Constructor
-  constructor(vertices, indices) {
+  constructor(vertices: number[], indices: number[]) {
     // Vertex array
-    this._vertexArray = gl.createVertexArray();
-    gl.bindVertexArray(this._vertexArray);
+    this.vertexArray = gl.createVertexArray();
+    gl.bindVertexArray(this.vertexArray);
 
     // Vertex buffer
     const vertexBuffer = gl.createBuffer();
@@ -99,7 +104,7 @@ export class Mesh {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
     // Index Buffer
-    this._vertexCount = indices.length;
+    this.vertexCount = indices.length;
     const indexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(indices), gl.STATIC_DRAW);
@@ -107,15 +112,15 @@ export class Mesh {
 
   // Render
   render() {
-    gl.bindVertexArray(this._vertexArray);
-    gl.drawElements(gl.TRIANGLES, this._vertexCount, gl.UNSIGNED_INT, 0);
+    gl.bindVertexArray(this.vertexArray);
+    gl.drawElements(gl.TRIANGLES, this.vertexCount, gl.UNSIGNED_INT, 0);
   }
 }
 
 // Sprite mesh class
 export class SpriteMesh extends Mesh {
   // Constructor
-  constructor(size) {
+  constructor(size: Vec2) {
     super(
       [
         size.x / 2, size.y / 2, 1, 0,
@@ -131,10 +136,10 @@ export class SpriteMesh extends Mesh {
 // Tiles mesh class
 export class TilesMesh extends Mesh {
   // Fields
-  #size;
+  readonly size: Vec2;
 
   // Constructor
-  constructor(size) {
+  constructor(size: Vec2) {
     // Generate vertices
     const vertices = [];
     for (let y = -size.y / 2; y < size.y / 2; y++) {
@@ -148,27 +153,22 @@ export class TilesMesh extends Mesh {
 
     // Mesh constructor
     super(vertices, []);
-    this.#size = size;
-  }
-
-  // Get size
-  get size() {
-    return this.#size;
+    this.size = size;
   }
 
   // Set tiles to render
-  set tiles(tiles) {
+  set tiles(tiles: Set<Vec2>) {
     // Generate indices
     const indices = [];
     for (const tile of tiles.values()) {
-      const index = 4 * (tile.y * this.#size.x + tile.x);
+      const index = 4 * (tile.y * this.size.x + tile.x);
       indices.push(index, index + 1, index + 2);
       indices.push(index + 1, index + 2, index + 3);
     }
-    this._vertexCount = indices.length;
+    this.vertexCount = indices.length;
 
     // Buffer indices
-    gl.bindVertexArray(this._vertexArray);
+    gl.bindVertexArray(this.vertexArray);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(indices), gl.DYNAMIC_DRAW);
   }
 }
@@ -179,16 +179,16 @@ export function clearScreen() {
 }
 
 // Set texture
-export function setTexture(texture) {
+export function setTexture(texture: WebGLTexture) {
   gl.bindTexture(gl.TEXTURE_2D, texture);
 }
 
 // Set color
-export function setColor(color) {
+export function setColor(color: util.Color) {
   gl.uniform3f(colorLocation, color.r, color.g, color.b);
 }
 
 // Set translate
-export function setTranslate(translate) {
+export function setTranslate(translate: Vec2) {
   gl.uniform2f(translateLocation, translate.x, translate.y);
 }

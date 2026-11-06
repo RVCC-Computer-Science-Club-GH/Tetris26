@@ -1,6 +1,6 @@
 // Imports
 import * as util from "./util";
-const vec2 = util.vec2;
+import { vec2, Vec2 } from "./util";
 
 // Tetrominos
 export const tetrominos = new Map([
@@ -72,11 +72,11 @@ export const tetrominos = new Map([
 // Tile class
 export class Tile {
   // Fields
-  color;
-  pos;
+  color: util.Color;
+  pos: Vec2;
 
   // Constructor
-  constructor(color, pos) {
+  constructor(color: util.Color, pos: Vec2) {
     this.color = color;
     this.pos = pos;
   }
@@ -85,41 +85,36 @@ export class Tile {
 // Tiles class
 export class Tiles {
   // Fields
-  #size;
-  tiles;
-  active;
+  readonly size: Vec2;
+  private tiles: Array<Tile | null>;
+  readonly active: Tile[];
 
   // Constructor
-  constructor(size) {
-    this.#size = size;
+  constructor(size: Vec2) {
+    this.size = size;
     this.tiles = Array(size.x * size.y);
     this.active = [];
   }
 
-  // Get size
-  get size() {
-    return this.#size;
-  }
-
   // Get index at position
-  #index(pos) {
-    return pos.y + this.#size.y * pos.x;
+  private _index(pos: Vec2) {
+    return pos.y + this.size.y * pos.x;
   }
-  index(pos) {
-    if (pos.x < 0 || pos.x >= this.#size.x || pos.y < 0 || pos.y >= this.#size.y) {
+  index(pos: Vec2) {
+    if (pos.x < 0 || pos.x >= this.size.x || pos.y < 0 || pos.y >= this.size.y) {
       throw new Error("Out of bounds tile position");
     } else {
-      return this.#index(pos);
+      return this._index(pos);
     }
   }
 
   // Yield every color and a set of positions for each tile of that color
   *render() {
     for (const color of util.tileColors.values()) {
-      const tiles = new Set;
-      for (let x = 0; x < this.#size.x; x++) {
-        for (let y = 0; y < this.#size.y; y++) {
-          const current = this.#index(vec2(x, y));
+      const tiles = new Set<Vec2>;
+      for (let x = 0; x < this.size.x; x++) {
+        for (let y = 0; y < this.size.y; y++) {
+          const current = this.index(vec2(x, y));
           if (this.tiles[current] && this.tiles[current].color == color) {
             tiles.add(this.tiles[current].pos);
           }
@@ -130,17 +125,17 @@ export class Tiles {
   }
 
   // Spawn a tetromino
-  spawnTetromino(key) {
-    const tetromino = tetrominos.get(key);
+  spawnTetromino(key: string) {
+    const tetromino = tetrominos.get(key)!;
     const x = Math.round(6 * Math.random() - 3);
     const positions = tetromino.tiles.map((pos) => vec2(
-      this.#size.x / 2 - 1 + pos.x + x,
-      this.#size.y - 1 - pos.y
+      this.size.x / 2 - 1 + pos.x + x,
+      this.size.y - 1 - pos.y
     ));
 
     let canSpawn = true;
     for (const pos of positions) {
-      if (this.tiles[this.#index(pos)] != null) {
+      if (this.tiles[this._index(pos)] != null) {
         canSpawn = false;
       }
     }
@@ -148,7 +143,7 @@ export class Tiles {
     if (canSpawn) {
       for (const pos of positions) {
         const tile = new Tile(tetromino.color, pos);
-        this.tiles[this.#index(pos)] = tile;
+        this.tiles[this._index(pos)] = tile;
         this.active.push(tile);
       }
     }
@@ -170,15 +165,15 @@ export class Tiles {
 
     if (canFall) {
       for (const tile of this.active) {
-        const current = this.#index(tile.pos);
+        const current = this._index(tile.pos);
         const belowPos = vec2(tile.pos.x, tile.pos.y - 1);
-        const below = this.#index(belowPos);
+        const below = this._index(belowPos);
         this.tiles[below] = this.tiles[current];
         this.tiles[current] = null;
-        this.tiles[below].pos = belowPos;
+        this.tiles[below]!.pos = belowPos;
       }
     } else {
-      this.active = [];
+      while (this.active.pop());
     }
   }
 }
