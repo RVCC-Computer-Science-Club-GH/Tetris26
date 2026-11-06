@@ -18,12 +18,12 @@ let nextTetromino = tiles.tetrominos.get("o")!;
 
 // Meshes
 const backgroundSpriteMesh = new render.SpriteMesh(util.worldSize);
-const mainTilesMesh = new render.TilesMesh(board.size);
-const mainTilesTranslate = vec2(-util.worldSize.x / 2 + mainTilesMesh.size.x / 2 + 1, 0);
-const nextTilesMesh = new render.TilesMesh(vec2(4, 2));
-const nextTilesTranslate = vec2(
-  util.worldSize.x / 2 - nextTilesMesh.size.x / 2 - 1,
-  util.worldSize.y / 2 - nextTilesMesh.size.y / 2 - 1
+const tilesMesh = new render.TilesMesh(board.size);
+const tilesTranslate = vec2(-util.worldSize.x / 2 + tilesMesh.size.x / 2 + 1, 0);
+const nextMesh = new render.TilesMesh(vec2(4, 2));
+const nextTranslate = vec2(
+  util.worldSize.x / 2 - nextMesh.size.x / 2 - 1,
+  util.worldSize.y / 2 - nextMesh.size.y / 2 - 1
 );
 
 // Game loop
@@ -46,7 +46,7 @@ window.requestAnimationFrame(function loop(time) {
         const keys = [...tiles.tetrominos.keys()];
         const key = keys[Math.floor(keys.length * Math.random())];
         nextTetromino = tiles.tetrominos.get(key)!;
-        nextTilesMesh.tiles = new Set(nextTetromino.tiles);
+        nextMesh.tiles = new Set(nextTetromino.tiles);
       }
     }
 
@@ -69,20 +69,20 @@ window.requestAnimationFrame(function loop(time) {
   render.setTexture(backgroundTexture);
   backgroundSpriteMesh.render();
 
-  // Draw main tiles
-  render.setTranslate(mainTilesTranslate);
+  // Draw tiles
+  render.setTranslate(tilesTranslate);
   render.setTexture(tileTexture);
   for (const { color, tiles: colorTiles } of board.render()) {
     render.setColor(color);
-    mainTilesMesh.tiles = colorTiles;
-    mainTilesMesh.render();
+    tilesMesh.tiles = colorTiles;
+    tilesMesh.render();
   }
 
-  // Draw next tiles
+  // Draw next tetromino
   render.setTranslate(vec2(
-    nextTilesTranslate.x + nextTetromino.offset.x,
-    nextTilesTranslate.y + nextTetromino.offset.y
+    nextTranslate.x + nextTetromino.offset.x,
+    nextTranslate.y + nextTetromino.offset.y
   ));
   render.setColor(nextTetromino.color);
-  nextTilesMesh.render();
+  nextMesh.render();
 });
