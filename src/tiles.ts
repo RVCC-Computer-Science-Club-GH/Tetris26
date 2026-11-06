@@ -87,7 +87,7 @@ export class Tiles {
   // Fields
   readonly size: util.Vec2;
   private tiles: Array<Tile | null>;
-  readonly active: Set<Tile>;
+  private active: Set<Tile>;
 
   // Constructor
   constructor(size: util.Vec2) {
@@ -101,11 +101,10 @@ export class Tiles {
     return pos.y + this.size.y * pos.x;
   }
   index(pos: util.Vec2): number {
-    if (pos.x < 0 || pos.x >= this.size.x || pos.y < 0 || pos.y >= this.size.y) {
+    if (pos.x < 0 || pos.x >= this.size.x || pos.y < 0 || pos.y >= this.size.y)
       throw new Error("Out of bounds tile position");
-    } else {
+    else
       return this._index(pos);
-    }
   }
 
   // Yield every color and a set of positions for each tile of that color
@@ -115,9 +114,8 @@ export class Tiles {
       for (let x = 0; x < this.size.x; x++) {
         for (let y = 0; y < this.size.y; y++) {
           const current = this.index(vec2(x, y));
-          if (this.tiles[current] && this.tiles[current].color == color) {
+          if (this.tiles[current] && this.tiles[current].color == color)
             tiles.add(this.tiles[current].pos);
-          }
         }
       }
       yield { color: color, tiles: tiles };
@@ -125,9 +123,8 @@ export class Tiles {
   }
 
   // Spawn a tetromino
-  spawnTetromino(key: string) {
+  spawnTetromino(key: string, x: number) {
     const tetromino = tetrominos.get(key)!;
-    const x = Math.round(6 * Math.random() - 3);
     const positions = tetromino.tiles.map((pos) => vec2(
       this.size.x / 2 - 1 + pos.x + x,
       this.size.y - 1 - pos.y
@@ -135,9 +132,8 @@ export class Tiles {
 
     let canSpawn = true;
     for (const pos of positions) {
-      if (this.tiles[this._index(pos)] != null) {
+      if (this.tiles[this._index(pos)] != null)
         canSpawn = false;
-      }
     }
 
     if (canSpawn) {
@@ -175,5 +171,16 @@ export class Tiles {
     } else {
       this.active.clear();
     }
+  }
+
+  // Check if any tiles active
+  anyActive(): boolean {
+    return this.active.size != 0;
+  }
+
+  // Clear tiles
+  clear() {
+    for (const i in this.tiles)
+      this.tiles[i] = null;
   }
 }

@@ -43,11 +43,18 @@ window.requestAnimationFrame(function loop(time) {
     // Apply gravity to active tiles
     tiles.gravity();
 
-    // Spawn a random tetromino if none active
-    if (tiles.active.size == 0) {
+    // Try to spawn a random tetromino if none active
+    for (let i = 0; !tiles.anyActive() && i < 100; i++) {
       const keys = [..._tiles.tetrominos.keys()];
-      tiles.spawnTetromino(keys[Math.floor(keys.length * Math.random())]);
+      tiles.spawnTetromino(
+        keys[Math.floor(keys.length * Math.random())],
+        Math.round(6 * Math.random() - 3)
+      );
     }
+
+    // Clear board if no tetromino could be spawned
+    if (!tiles.anyActive())
+      tiles.clear();
   }
 
   // Clear screen

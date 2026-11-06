@@ -6,9 +6,8 @@ const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 
 // WebGL context
 const gl = canvas.getContext("webgl2", { antialias: true }) as WebGL2RenderingContext;
-if (gl == null) {
+if (gl == null)
   throw new util.AlertError("Failed to get WebGL 2 context");
-}
 
 // Blending
 gl.enable(gl.BLEND);
@@ -19,9 +18,8 @@ function compileShader(type: number, source: string): WebGLShader {
   const shader = gl.createShader(type)!;
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS))
     throw new util.AlertError(`Failed to compile shader: ${gl.getShaderInfoLog(shader)}`);
-  }
   return shader;
 }
 import vertSource from "./shaders/transformVert.glsl";
@@ -34,9 +32,8 @@ const program = gl.createProgram();
 gl.attachShader(program, vertShader);
 gl.attachShader(program, fragShader);
 gl.linkProgram(program);
-if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+if (!gl.getProgramParameter(program, gl.LINK_STATUS))
   throw new util.AlertError(`Failed to link shaders: ${gl.getProgramInfoLog(program)}`);
-}
 gl.useProgram(program);
 gl.deleteShader(vertShader);
 gl.deleteShader(fragShader);
