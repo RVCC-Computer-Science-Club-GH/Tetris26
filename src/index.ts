@@ -19,7 +19,7 @@ let timeStopped: number;
 let timeOffset = -performance.now();
 
 // Meshes
-const backgroundSpriteMesh = new render.SpriteMesh(util.worldSize);
+const backgroundMesh = new render.SpriteMesh(util.worldSize);
 const tilesMesh = new render.TilesMesh(board.size);
 const tilesTranslate = vec2(-util.worldSize.x / 2 + tilesMesh.size.x / 2 + 1, 0);
 const nextMesh = new render.TilesMesh(vec2(4, 2));
@@ -67,7 +67,7 @@ function gameLoop(time: number) {
   render.setTranslate(vec2(0, 0));
   render.setColor(util.colors.white);
   render.setTexture(backgroundTexture);
-  backgroundSpriteMesh.render();
+  backgroundMesh.render();
 
   // Draw tiles
   render.setTranslate(tilesTranslate);
