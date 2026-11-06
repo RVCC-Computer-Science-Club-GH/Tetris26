@@ -49,7 +49,7 @@ window.requestAnimationFrame(function loop(time) {
       const keys = [..._tiles.tetrominos.keys()];
       tiles.spawnTetromino(
         keys[Math.floor(keys.length * Math.random())],
-        Math.round(6 * Math.random() - 3)
+        () => Math.round(6 * Math.random() - 3)
       );
     }
 

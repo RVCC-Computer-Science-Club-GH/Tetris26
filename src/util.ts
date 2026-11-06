@@ -69,8 +69,8 @@ export const worldSize = vec2(17, 22);
 export class Timer {
   // Fields
   private time: number;
-  public duration: number;
-  public resets: boolean;
+  duration: number;
+  resets: boolean;
 
   // Constructor
   constructor(time: number, duration: number, resets: boolean) {

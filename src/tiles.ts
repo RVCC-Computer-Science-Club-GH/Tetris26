@@ -123,8 +123,9 @@ export class Tiles {
   }
 
   // Spawn a tetromino
-  spawnTetromino(key: string, x: number) {
+  spawnTetromino(key: string, genX: () => number) {
     const tetromino = tetrominos.get(key)!;
+    const x = genX();
     const positions = tetromino.tiles.map((pos) => vec2(
       this.size.x / 2 - 1 + pos.x + x,
       this.size.y - 1 - pos.y
