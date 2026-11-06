@@ -87,13 +87,13 @@ export class Tiles {
   // Fields
   readonly size: Vec2;
   private tiles: Array<Tile | null>;
-  readonly active: Tile[];
+  readonly active: Set<Tile>;
 
   // Constructor
   constructor(size: Vec2) {
     this.size = size;
     this.tiles = Array(size.x * size.y);
-    this.active = [];
+    this.active = new Set;
   }
 
   // Get index at position
@@ -144,7 +144,7 @@ export class Tiles {
       for (const pos of positions) {
         const tile = new Tile(tetromino.color, pos);
         this.tiles[this._index(pos)] = tile;
-        this.active.push(tile);
+        this.active.add(tile);
       }
     }
   }
@@ -155,7 +155,7 @@ export class Tiles {
     for (const tile of this.active) {
       try {
         const below = this.tiles[this.index(vec2(tile.pos.x, tile.pos.y - 1))]
-        if (below != null && !this.active.find((otherTile) => below === otherTile)) {
+        if (below != null && !this.active.has(below)) {
           canFall = false;
         }
       } catch {
@@ -173,7 +173,7 @@ export class Tiles {
         this.tiles[below]!.pos = belowPos;
       }
     } else {
-      while (this.active.pop());
+      this.active.clear();
     }
   }
 }

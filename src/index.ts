@@ -12,7 +12,7 @@ const tileTexture = render.loadTexture(tileImage);
 
 // State
 const tiles = new _tiles.Tiles(vec2(10, 20));
-const gravityTimer = new util.Timer(0, 0.1, true);
+const updateTimer = new util.Timer(0, 0.1, true);
 
 // Meshes
 const backgroundSpriteMesh = new render.SpriteMesh(util.worldSize);
@@ -38,15 +38,16 @@ window.requestAnimationFrame(function loop(time) {
   // Time in seconds
   time *= 0.001;
 
-  // Gravity
-  while (gravityTimer.tick(time)) {
+  // Update loop
+  while (updateTimer.tick(time)) {
+    // Apply gravity to active tiles
     tiles.gravity();
-  }
 
-  // Spawn a random tetronimo
-  if (tiles.active.length == 0) {
-    const keys = [..._tiles.tetrominos.keys()];
-    tiles.spawnTetromino(keys[Math.floor(keys.length * Math.random())]);
+    // Spawn a random tetromino if none active
+    if (tiles.active.size == 0) {
+      const keys = [..._tiles.tetrominos.keys()];
+      tiles.spawnTetromino(keys[Math.floor(keys.length * Math.random())]);
+    }
   }
 
   // Clear screen
