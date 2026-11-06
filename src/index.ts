@@ -33,6 +33,8 @@ function gameLoop(time: number) {
   // Request a new frame before any errors
   if (!shouldStop)
     window.requestAnimationFrame(gameLoop);
+  else
+    timeStopped = time;
 
   // Time in seconds
   time = (time + timeOffset) / 1000;
@@ -89,7 +91,6 @@ function gameLoop(time: number) {
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
     shouldStop = true;
-    timeStopped = performance.now();
   } else if (shouldStop) {
     shouldStop = false;
     timeOffset -= performance.now() - timeStopped;
