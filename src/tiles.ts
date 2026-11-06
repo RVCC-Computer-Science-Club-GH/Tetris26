@@ -146,8 +146,7 @@ export class Tiles {
 
   // Spawn a tetromino
   spawnTetromino(tetromino: Tetromino): boolean {
-    const margin = this.size.x - 4;
-    const x = Math.round(margin * Math.random() - margin / 2);
+    const x = Math.round(this.size.x * Math.random() - this.size.x / 2);
     const positions = tetromino.tiles.map((pos) => vec2(
       this.size.x / 2 + pos.x + x - 2,
       this.size.y + pos.y - 2
@@ -155,8 +154,12 @@ export class Tiles {
 
     let canSpawn = true;
     for (const pos of positions) {
-      if (this.tiles[this.index(pos)] != null)
+      try {
+        if (this.tiles[this.index(pos)] != null)
+          canSpawn = false;
+      } catch {
         canSpawn = false;
+      }
     }
 
     if (canSpawn) {

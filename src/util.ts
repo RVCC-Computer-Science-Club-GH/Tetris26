@@ -43,8 +43,8 @@ export const tileColors = new Map([
   ["blue", colors.blue],
   ["orange", colors.orange],
 ]);
-const scale = 1.2;
-const offset = 0.3;
+const scale = 1.1;
+const offset = 0.2;
 for (const color of tileColors.values()) {
   color.r = color.r * scale + offset;
   color.g = color.g * scale + offset;
