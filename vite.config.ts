@@ -20,7 +20,10 @@ export default vite.defineConfig(({ mode }) => {
       ViteMinifyPlugin(),
       checkerPlugin({ typescript: true }),
       viteStaticCopy({ targets: [{ src: "license.txt", dest: "" }] }),
-      compression({ include: /\.(html|xml|css|json|js|mjs|cjs|svg|yaml|yml|toml|wasm)$/ }),
+      compression({
+        threshold: 1024,
+        include: /\.(html|xml|css|json|js|mjs|cjs|svg|yaml|yml|toml|wasm)$/
+      }),
       glslPlugin({ minify: mode !== "development" })
     ]
   };
