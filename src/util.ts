@@ -82,13 +82,8 @@ export class Timer {
   // Tick
   tick(time: number): boolean {
     const finished = time > this.time;
-    if (finished) {
-      if (this.resets) {
-        this.time += this.duration;
-      } else {
-        this.time = Infinity;
-      }
-    }
+    if (finished && this.resets)
+      this.time += this.duration;
     return finished;
   }
 
