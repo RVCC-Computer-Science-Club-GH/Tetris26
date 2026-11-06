@@ -2,7 +2,7 @@
 import * as render from "./render";
 import * as util from "./util";
 const vec2 = util.vec2;
-import * as _tiles from "./tiles";
+import * as tiles from "./tiles";
 
 // Textures
 import backgroundImage from "./assets/background.webp";
@@ -11,23 +11,18 @@ import tileImage from "./assets/tile.webp";
 const tileTexture = render.loadTexture(tileImage);
 
 // State
-const tiles = new _tiles.Tiles(vec2(10, 20));
+const board = new tiles.Tiles(vec2(10, 20));
 const initUpdateDelta = 0.1;
 const updateTimer = new util.Timer(0, initUpdateDelta, true);
+let nextTetromino = tiles.tetrominos.get("o")!;
 
 // Meshes
 const backgroundSpriteMesh = new render.SpriteMesh(util.worldSize);
-const mainTilesMesh = new render.TilesMesh(tiles.size);
+const mainTilesMesh = new render.TilesMesh(board.size);
 const mainTilesTranslate = vec2(-util.worldSize.x / 2 + mainTilesMesh.size.x / 2 + 1, 0);
 const nextTilesMesh = new render.TilesMesh(vec2(4, 2));
-nextTilesMesh.tiles = new Set([
-  vec2(0, 0),
-  vec2(1, 0),
-  vec2(1, 1),
-  vec2(2, 1),
-]);
 const nextTilesTranslate = vec2(
-  util.worldSize.x / 2 - nextTilesMesh.size.x / 2 - 0.5,
+  util.worldSize.x / 2 - nextTilesMesh.size.x / 2 - 1,
   util.worldSize.y / 2 - nextTilesMesh.size.y / 2 - 1
 );
 
@@ -42,24 +37,26 @@ window.requestAnimationFrame(function loop(time) {
   // Update loop
   while (updateTimer.tick(time)) {
     // Apply gravity to active tiles
-    tiles.gravity();
+    board.gravity();
 
-    // Try to spawn a random tetromino if none active
-    for (let i = 0; !tiles.anyActive() && i < 100; i++) {
-      const keys = [..._tiles.tetrominos.keys()];
-      tiles.spawnTetromino(
-        keys[Math.floor(keys.length * Math.random())],
-        () => Math.round(6 * Math.random() - 3)
-      );
+    // Try to spawn a random tetromino if none active and select a random next
+    // tetromino if one was spawned
+    for (let i = 0; !board.anyActive() && i < 100; i++) {
+      if (board.spawnTetromino(nextTetromino)) {
+        const keys = [...tiles.tetrominos.keys()];
+        const key = keys[Math.floor(keys.length * Math.random())];
+        nextTetromino = tiles.tetrominos.get(key)!;
+        nextTilesMesh.tiles = new Set(nextTetromino.tiles);
+      }
     }
 
-    // Clear board if no tetromino could be spawned
-    if (!tiles.anyActive()) {
+    // Clear board if no tetromino could be spawned and speed up
+    if (!board.anyActive()) {
       if (updateTimer.duration < initUpdateDelta / 2)
         updateTimer.duration = initUpdateDelta;
       else
         updateTimer.duration *= 3 / 4;
-      tiles.clear();
+      board.clear();
     }
   }
 
@@ -75,14 +72,17 @@ window.requestAnimationFrame(function loop(time) {
   // Draw main tiles
   render.setTranslate(mainTilesTranslate);
   render.setTexture(tileTexture);
-  for (const { color, tiles: colorTiles } of tiles.render()) {
+  for (const { color, tiles: colorTiles } of board.render()) {
     render.setColor(color);
     mainTilesMesh.tiles = colorTiles;
     mainTilesMesh.render();
   }
 
   // Draw next tiles
-  render.setTranslate(nextTilesTranslate);
-  render.setColor(util.colors.green);
+  render.setTranslate(vec2(
+    nextTilesTranslate.x + nextTetromino.offset.x,
+    nextTilesTranslate.y + nextTetromino.offset.y
+  ));
+  render.setColor(nextTetromino.color);
   nextTilesMesh.render();
 });
