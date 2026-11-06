@@ -47,11 +47,9 @@ const uvLocation = gl.getAttribLocation(program, "uvIn");
 const colorLocation = gl.getUniformLocation(program, "color");
 
 // Resize canvas to fit page
-window.addEventListener("resize", (event) => {
-  const target = event.target as Window;
-  const pixelRatio = target.devicePixelRatio;
-  canvas.width = pixelRatio * target.innerWidth;
-  canvas.height = pixelRatio * target.innerHeight;
+window.addEventListener("resize", () => {
+  canvas.width = window.devicePixelRatio * window.innerWidth;
+  canvas.height = window.devicePixelRatio * window.innerHeight;
   gl.viewport(0, 0, canvas.width, canvas.height);
   const minDimension = 2 * Math.min(
     canvas.width / util.worldSize.x,

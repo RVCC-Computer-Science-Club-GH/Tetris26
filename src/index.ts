@@ -14,6 +14,9 @@ const tileTexture = render.loadTexture(tileImage);
 const board = new tiles.Tiles(vec2(10, 20));
 const updateTimer = new util.Timer(0, 0.15, true);
 let nextTetromino = tiles.tetrominos.get("o")!;
+let shouldStop = false;
+let timeStopped: number;
+let timeOffset = -performance.now();
 
 // Meshes
 const backgroundSpriteMesh = new render.SpriteMesh(util.worldSize);
@@ -26,12 +29,13 @@ const nextTranslate = vec2(
 );
 
 // Game loop
-window.requestAnimationFrame(function loop(time) {
+function gameLoop(time: number) {
   // Request a new frame before any errors
-  window.requestAnimationFrame(loop);
+  if (!shouldStop)
+    window.requestAnimationFrame(gameLoop);
 
   // Time in seconds
-  time *= 0.001;
+  time = (time + timeOffset) / 1000;
 
   // Update loop
   while (updateTimer.tick(time)) {
@@ -79,4 +83,17 @@ window.requestAnimationFrame(function loop(time) {
   ));
   render.setColor(nextTetromino.color);
   nextMesh.render();
+}
+
+// Pause and unpause on visibility change
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    shouldStop = true;
+    timeStopped = performance.now();
+  } else if (shouldStop) {
+    shouldStop = false;
+    timeOffset -= performance.now() - timeStopped;
+    window.requestAnimationFrame(gameLoop);
+  }
 });
+window.requestAnimationFrame(gameLoop);
