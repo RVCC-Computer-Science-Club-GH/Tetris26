@@ -1,6 +1,6 @@
 // Imports
 import * as util from "./util";
-import { vec2, Vec2 } from "./util";
+const vec2 = util.vec2;
 
 // Tetrominos
 export const tetrominos = new Map([
@@ -73,10 +73,10 @@ export const tetrominos = new Map([
 export class Tile {
   // Fields
   color: util.Color;
-  pos: Vec2;
+  pos: util.Vec2;
 
   // Constructor
-  constructor(color: util.Color, pos: Vec2) {
+  constructor(color: util.Color, pos: util.Vec2) {
     this.color = color;
     this.pos = pos;
   }
@@ -85,22 +85,22 @@ export class Tile {
 // Tiles class
 export class Tiles {
   // Fields
-  readonly size: Vec2;
+  readonly size: util.Vec2;
   private tiles: Array<Tile | null>;
   readonly active: Set<Tile>;
 
   // Constructor
-  constructor(size: Vec2) {
+  constructor(size: util.Vec2) {
     this.size = size;
     this.tiles = Array(size.x * size.y);
     this.active = new Set;
   }
 
   // Get index at position
-  private _index(pos: Vec2): number {
+  private _index(pos: util.Vec2): number {
     return pos.y + this.size.y * pos.x;
   }
-  index(pos: Vec2): number {
+  index(pos: util.Vec2): number {
     if (pos.x < 0 || pos.x >= this.size.x || pos.y < 0 || pos.y >= this.size.y) {
       throw new Error("Out of bounds tile position");
     } else {
@@ -109,9 +109,9 @@ export class Tiles {
   }
 
   // Yield every color and a set of positions for each tile of that color
-  *render(): Generator<{ color: util.Color, tiles: Set<Vec2> }> {
+  *render(): Generator<{ color: util.Color, tiles: Set<util.Vec2> }> {
     for (const color of util.tileColors.values()) {
-      const tiles = new Set<Vec2>;
+      const tiles = new Set<util.Vec2>;
       for (let x = 0; x < this.size.x; x++) {
         for (let y = 0; y < this.size.y; y++) {
           const current = this.index(vec2(x, y));

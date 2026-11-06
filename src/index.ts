@@ -1,7 +1,7 @@
 // Imports
 import * as render from "./render";
 import * as util from "./util";
-import { vec2 } from "./util";
+const vec2 = util.vec2;
 import * as _tiles from "./tiles";
 
 // Textures

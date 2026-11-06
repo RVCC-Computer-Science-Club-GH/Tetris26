@@ -1,6 +1,5 @@
 // Imports
 import * as util from "./util";
-import { Vec2 } from "./util";
 
 // Elements
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -120,7 +119,7 @@ export class Mesh {
 // Sprite mesh class
 export class SpriteMesh extends Mesh {
   // Constructor
-  constructor(size: Vec2) {
+  constructor(size: util.Vec2) {
     super(
       [
         size.x / 2, size.y / 2, 1, 0,
@@ -136,10 +135,10 @@ export class SpriteMesh extends Mesh {
 // Tiles mesh class
 export class TilesMesh extends Mesh {
   // Fields
-  readonly size: Vec2;
+  readonly size: util.Vec2;
 
   // Constructor
-  constructor(size: Vec2) {
+  constructor(size: util.Vec2) {
     // Generate vertices
     const vertices = [];
     for (let y = -size.y / 2; y < size.y / 2; y++) {
@@ -157,7 +156,7 @@ export class TilesMesh extends Mesh {
   }
 
   // Set tiles to render
-  set tiles(tiles: Set<Vec2>) {
+  set tiles(tiles: Set<util.Vec2>) {
     // Generate indices
     const indices = [];
     for (const tile of tiles.values()) {
@@ -189,6 +188,6 @@ export function setColor(color: util.Color) {
 }
 
 // Set translate
-export function setTranslate(translate: Vec2) {
+export function setTranslate(translate: util.Vec2) {
   gl.uniform2f(translateLocation, translate.x, translate.y);
 }
