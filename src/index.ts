@@ -13,7 +13,7 @@ const tileTexture = render.loadTexture(tileImage);
 // State
 const board = new tiles.Tiles(vec2(10, 20));
 const updateTimer = new util.Timer(0, 0.15, true);
-let nextTetromino = tiles.tetrominos.get("o")!;
+let nextTetromino: tiles.Tetromino;
 let shouldStop = false;
 let timeStopped: number;
 let timeOffset = -performance.now();
@@ -28,6 +28,15 @@ const nextTranslate = vec2(
   util.worldSize.y / 2 - nextMesh.size.y / 2 - 1
 );
 
+// Select a random next tetromino
+function randomNextTetromino() {
+  const keys = [...tiles.tetrominos.keys()];
+  const key = keys[Math.floor(keys.length * Math.random())];
+  nextTetromino = tiles.tetrominos.get(key)!;
+  nextMesh.tiles = new Set(nextTetromino.tiles);
+}
+randomNextTetromino();
+
 // Game loop
 function gameLoop(time: number) {
   // Request a new frame before any errors
@@ -41,23 +50,19 @@ function gameLoop(time: number) {
 
   // Update loop
   while (updateTimer.tick(time)) {
-    // Apply gravity to active tiles
-    board.gravity();
-
     // Try to spawn a random tetromino if none active and select a random next
     // tetromino if one was spawned
     for (let i = 0; !board.anyActive() && i < 100; i++) {
-      if (board.spawnTetromino(nextTetromino)) {
-        const keys = [...tiles.tetrominos.keys()];
-        const key = keys[Math.floor(keys.length * Math.random())];
-        nextTetromino = tiles.tetrominos.get(key)!;
-        nextMesh.tiles = new Set(nextTetromino.tiles);
-      }
+      if (board.spawnTetromino(nextTetromino))
+        randomNextTetromino();
     }
 
     // Clear board if no tetromino could be spawned
     if (!board.anyActive())
       board.clear();
+
+    // Apply gravity to active tiles
+    board.gravity();
   }
 
   // Clear screen
