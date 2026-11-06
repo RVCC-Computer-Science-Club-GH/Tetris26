@@ -12,7 +12,8 @@ const tileTexture = render.loadTexture(tileImage);
 
 // State
 const tiles = new _tiles.Tiles(vec2(10, 20));
-const updateTimer = new util.Timer(0, 0.1, true);
+const initUpdateDelta = 0.1;
+const updateTimer = new util.Timer(0, initUpdateDelta, true);
 
 // Meshes
 const backgroundSpriteMesh = new render.SpriteMesh(util.worldSize);
@@ -53,8 +54,13 @@ window.requestAnimationFrame(function loop(time) {
     }
 
     // Clear board if no tetromino could be spawned
-    if (!tiles.anyActive())
+    if (!tiles.anyActive()) {
+      if (updateTimer.duration < initUpdateDelta / 2)
+        updateTimer.duration = initUpdateDelta;
+      else
+        updateTimer.duration *= 3 / 4;
       tiles.clear();
+    }
   }
 
   // Clear screen
