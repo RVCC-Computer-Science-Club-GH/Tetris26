@@ -58,7 +58,7 @@ export class Vec2 {
 }
 
 // 2D vector helper
-export function vec2(x: number, y: number) {
+export function vec2(x: number, y: number): Vec2 {
   return new Vec2(x, y);
 }
 
@@ -80,7 +80,7 @@ export class Timer {
   }
 
   // Tick
-  tick(time: number) {
+  tick(time: number): boolean {
     const finished = time > this.time;
     if (finished) {
       if (this.resets) {

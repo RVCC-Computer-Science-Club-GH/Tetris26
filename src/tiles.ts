@@ -97,10 +97,10 @@ export class Tiles {
   }
 
   // Get index at position
-  private _index(pos: Vec2) {
+  private _index(pos: Vec2): number {
     return pos.y + this.size.y * pos.x;
   }
-  index(pos: Vec2) {
+  index(pos: Vec2): number {
     if (pos.x < 0 || pos.x >= this.size.x || pos.y < 0 || pos.y >= this.size.y) {
       throw new Error("Out of bounds tile position");
     } else {
@@ -109,7 +109,7 @@ export class Tiles {
   }
 
   // Yield every color and a set of positions for each tile of that color
-  *render() {
+  *render(): Generator<{ color: util.Color, tiles: Set<Vec2> }> {
     for (const color of util.tileColors.values()) {
       const tiles = new Set<Vec2>;
       for (let x = 0; x < this.size.x; x++) {

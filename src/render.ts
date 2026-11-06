@@ -6,7 +6,7 @@ import { Vec2 } from "./util";
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 
 // WebGL context
-let gl = canvas.getContext("webgl2", { antialias: true }) as WebGL2RenderingContext;
+const gl = canvas.getContext("webgl2", { antialias: true }) as WebGL2RenderingContext;
 if (gl == null) {
   throw new util.AlertError("Failed to get WebGL 2 context");
 }
@@ -16,7 +16,7 @@ gl.enable(gl.BLEND);
 gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
 // Shader compilation
-function compileShader(type: number, source: string) {
+function compileShader(type: number, source: string): WebGLShader {
   const shader = gl.createShader(type)!;
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
@@ -70,7 +70,7 @@ window.addEventListener("resize", (event) => {
 window.dispatchEvent(new Event("resize"));
 
 // Texture loading
-export function loadTexture(url: string) {
+export function loadTexture(url: string): WebGLTexture {
   const image = new Image;
   const texture = gl.createTexture();
   image.addEventListener("load", () => {
