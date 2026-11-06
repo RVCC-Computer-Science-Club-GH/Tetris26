@@ -28,4 +28,3 @@ export default vite.defineConfig(({ mode }) => {
     ]
   };
 });
-
