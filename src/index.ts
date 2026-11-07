@@ -102,5 +102,7 @@ document.addEventListener("visibilitychange", () => {
     window.requestAnimationFrame(gameLoop);
   }
 });
+
+// Start game loop
 timeOffset = -performance.now();
 window.requestAnimationFrame(gameLoop);
