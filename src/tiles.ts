@@ -200,9 +200,9 @@ export class Tiles {
     }
   }
 
-  // Check if any tiles active
-  anyActive(): boolean {
-    return this.active.size != 0;
+  // Check if a tetromino should spawn
+  shouldSpawn(): boolean {
+    return this.active.size == 0;
   }
 
   // Clear tiles

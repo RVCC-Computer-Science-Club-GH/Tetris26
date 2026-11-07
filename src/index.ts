@@ -16,7 +16,7 @@ const updateTimer = new util.Timer(0, 0.15, true);
 let nextTetromino: tiles.Tetromino;
 let shouldStop = false;
 let timeStopped: number;
-let timeOffset = -performance.now();
+let timeOffset: number;
 
 // Meshes
 const backgroundMesh = new render.SpriteMesh(util.worldSize);
@@ -52,13 +52,13 @@ function gameLoop(time: number) {
   while (updateTimer.tick(time)) {
     // Try to spawn a random tetromino if none active and select a random next
     // tetromino if one was spawned
-    for (let i = 0; !board.anyActive() && i < 100; i++) {
+    for (let i = 0; board.shouldSpawn() && i < 100; i++) {
       if (board.spawnTetromino(nextTetromino))
         randomNextTetromino();
     }
 
     // Clear board if no tetromino could be spawned
-    if (!board.anyActive())
+    if (board.shouldSpawn())
       board.clear();
 
     // Apply gravity to active tiles
@@ -102,4 +102,5 @@ document.addEventListener("visibilitychange", () => {
     window.requestAnimationFrame(gameLoop);
   }
 });
+timeOffset = -performance.now();
 window.requestAnimationFrame(gameLoop);
