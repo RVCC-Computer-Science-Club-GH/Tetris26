@@ -172,32 +172,32 @@ export class Tiles {
     return canSpawn;
   }
 
-  // Apply gravity to active tiles
-  gravity() {
-    let canFall = true;
+  // Move active tiles
+  moveActive(offset: util.Vec2): boolean {
+    let canMove = true;
     for (const tile of this.active) {
       try {
-        const below = this.tiles[this.index(vec2(tile.pos.x, tile.pos.y - 1))]
-        if (below != null && !this.active.has(below)) {
-          canFall = false;
+        const newPos = vec2(tile.pos.x + offset.x, tile.pos.y + offset.y);
+        const newTile = this.tiles[this.index(newPos)];
+        if (newTile != null && !this.active.has(newTile)) {
+          canMove = false;
         }
       } catch {
-        canFall = false;
+        canMove = false;
       }
     }
 
-    if (canFall) {
+    if (canMove) {
       for (const tile of this.active) {
-        const current = this.unsafeIndex(tile.pos);
-        const belowPos = vec2(tile.pos.x, tile.pos.y - 1);
-        const below = this.unsafeIndex(belowPos);
-        this.tiles[below] = this.tiles[current];
-        this.tiles[current] = null;
-        this.tiles[below]!.pos = belowPos;
+        const index = this.unsafeIndex(tile.pos);
+        const newPos = vec2(tile.pos.x + offset.x, tile.pos.y + offset.y);
+        const newIndex = this.unsafeIndex(newPos);
+        this.tiles[newIndex] = this.tiles[index];
+        this.tiles[index] = null;
+        this.tiles[newIndex]!.pos = newPos;
       }
-    } else {
-      this.active.clear();
     }
+    return canMove;
   }
 
   // Check if a tetromino should spawn
@@ -209,5 +209,10 @@ export class Tiles {
   clear() {
     for (const i in this.tiles)
       this.tiles[i] = null;
+  }
+
+  // Clear active tiles
+  clearActive() {
+    this.active.clear();
   }
 }

@@ -62,7 +62,8 @@ function gameLoop(time: number) {
       board.clear();
 
     // Apply gravity to active tiles
-    board.gravity();
+    if (!board.moveActive(vec2(0, -1)))
+      board.clearActive();
   }
 
   // Clear screen
