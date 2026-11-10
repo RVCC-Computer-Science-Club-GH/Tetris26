@@ -1,6 +1,6 @@
 // Imports
 import * as util from "./util";
-const vec2 = util.vec2;
+const { vec2 } = util;
 
 // Tetromino class
 export class Tetromino {
@@ -8,12 +8,19 @@ export class Tetromino {
   color: util.Color;
   tiles: util.Vec2[];
   offset: util.Vec2;
+  origin: util.Vec2;
 
   // Constructor
-  constructor(color: util.Color, tiles: util.Vec2[], offset: util.Vec2) {
+  constructor(
+    color: util.Color,
+    tiles: util.Vec2[],
+    offset: util.Vec2,
+    origin: util.Vec2
+  ) {
     this.color = color;
     this.tiles = tiles;
     this.offset = offset;
+    this.origin = origin;
   }
 }
 
@@ -27,7 +34,8 @@ export const tetrominos = new Map([
       vec2(2, 1),
       vec2(3, 1)
     ],
-    vec2(0, -0.5)
+    vec2(0, -0.5),
+    vec2(1, 1)
   )],
   ["j", new Tetromino(
     util.colors.blue,
@@ -37,7 +45,8 @@ export const tetrominos = new Map([
       vec2(3, 0),
       vec2(1, 1)
     ],
-    vec2(-0.5, 0)
+    vec2(-0.5, 0),
+    vec2(2, 0)
   )],
   ["l", new Tetromino(
     util.colors.orange,
@@ -47,7 +56,8 @@ export const tetrominos = new Map([
       vec2(2, 0),
       vec2(2, 1)
     ],
-    vec2(0.5, 0)
+    vec2(0.5, 0),
+    vec2(1, 0)
   )],
   ["o", new Tetromino(
     util.colors.yellow,
@@ -57,7 +67,8 @@ export const tetrominos = new Map([
       vec2(1, 1),
       vec2(2, 1)
     ],
-    vec2(0, 0)
+    vec2(0, 0),
+    vec2(1, 0)
   )],
   ["s", new Tetromino(
     util.colors.green,
@@ -67,7 +78,8 @@ export const tetrominos = new Map([
       vec2(2, 1),
       vec2(3, 1)
     ],
-    vec2(-0.5, 0)
+    vec2(-0.5, 0),
+    vec2(2, 0)
   )],
   ["z", new Tetromino(
     util.colors.red,
@@ -77,7 +89,8 @@ export const tetrominos = new Map([
       vec2(0, 1),
       vec2(1, 1)
     ],
-    vec2(0.5, 0)
+    vec2(0.5, 0),
+    vec2(1, 0)
   )],
   ["t", new Tetromino(
     util.colors.purple,
@@ -87,7 +100,8 @@ export const tetrominos = new Map([
       vec2(2, 0),
       vec2(1, 1)
     ],
-    vec2(0.5, 0)
+    vec2(0.5, 0),
+    vec2(1, 0)
   )]
 ]);
 
@@ -148,13 +162,15 @@ export class Tiles {
 
   // Spawn a tetromino
   spawnTetromino(tetromino: Tetromino): boolean {
+    // Transform
     const x = Math.round(this.size.x * Math.random() - this.size.x / 2);
     const transform = (pos: util.Vec2) => vec2(
       this.size.x / 2 + pos.x + x - 2,
       this.size.y + pos.y - 2
     );
-    const positions = tetromino.tiles.map(transform);
 
+    // Check if can spawn
+    const positions = tetromino.tiles.map(transform);
     for (const pos of positions) {
       try {
         if (this.tiles[this.index(pos)] != null)
@@ -164,21 +180,26 @@ export class Tiles {
       }
     }
 
+    // Spawn
     for (const pos of positions) {
       const tile = new Tile(tetromino.color, pos);
       this.tiles[this.unsafeIndex(pos)] = tile;
       this.active.add(tile);
     }
-    this.origin = transform(vec2(2, 1));
+
+    // Update origin
+    this.origin = transform(tetromino.origin);
     return true;
   }
 
   // Move active tiles
   moveActive(offset: util.Vec2, rotation?: util.Vec2): boolean {
+    // Check if should spawn and default rotation
     if (this.shouldSpawn())
       return false;
     rotation = rotation ? rotation : vec2(1, 0);
 
+    // Transform
     const transform = (pos: util.Vec2) => {
       const centered = vec2(pos.x - this.origin!.x, pos.y - this.origin!.y);
       return vec2(
@@ -187,6 +208,7 @@ export class Tiles {
       );
     };
 
+    // Check if can move
     for (const tile of this.active) {
       try {
         const newPos = transform(tile.pos);
@@ -198,12 +220,15 @@ export class Tiles {
       }
     }
 
+    // Move tile references in array and update positions
     for (const tile of this.active) {
       this.tiles[this.unsafeIndex(tile.pos)] = null;
       tile.pos = transform(tile.pos);
     }
     for (const tile of this.active)
       this.tiles[this.unsafeIndex(tile.pos)] = tile;
+
+    // Transform origin
     this.origin = transform(this.origin!);
     return true;
   }

@@ -1,7 +1,7 @@
 // Imports
 import * as render from "./render";
 import * as util from "./util";
-const vec2 = util.vec2;
+const { vec2 } = util;
 import * as tiles from "./tiles";
 
 // Textures
@@ -40,11 +40,25 @@ randomNextTetromino();
 // Move active tiles with keyboard
 document.addEventListener("keydown", (event) => {
   switch (event.code) {
+    // Left
     case "KeyA":
+    case "ArrowLeft":
       board.moveActive(vec2(-1, 0));
       break;
+    // Right
     case "KeyD":
+    case "ArrowRight":
       board.moveActive(vec2(1, 0));
+      break;
+    // Clockwise
+    case "KeyW":
+    case "ArrowUp":
+      board.moveActive(vec2(0, 0), vec2(0, -1));
+      break;
+    // Counterclockwise
+    case "KeyS":
+    case "ArrowDown":
+      board.moveActive(vec2(0, 0), vec2(0, 1));
   }
 });
 
