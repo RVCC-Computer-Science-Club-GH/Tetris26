@@ -110,6 +110,7 @@ export class Tiles {
   readonly size: util.Vec2;
   private tiles: Array<Tile | null>;
   private active: Set<Tile>;
+  private origin: util.Vec2 | undefined;
 
   // Constructor
   constructor(size: util.Vec2) {
@@ -147,62 +148,69 @@ export class Tiles {
   // Spawn a tetromino
   spawnTetromino(tetromino: Tetromino): boolean {
     const x = Math.round(this.size.x * Math.random() - this.size.x / 2);
-    const positions = tetromino.tiles.map((pos) => vec2(
+    const transform = (pos: util.Vec2) => vec2(
       this.size.x / 2 + pos.x + x - 2,
       this.size.y + pos.y - 2
-    ));
+    );
+    const positions = tetromino.tiles.map(transform);
 
-    let canSpawn = true;
     for (const pos of positions) {
       try {
         if (this.tiles[this.index(pos)] != null)
-          canSpawn = false;
+          return false;
       } catch {
-        canSpawn = false;
+        return false;
       }
     }
 
-    if (canSpawn) {
-      for (const pos of positions) {
-        const tile = new Tile(tetromino.color, pos);
-        this.tiles[this.unsafeIndex(pos)] = tile;
-        this.active.add(tile);
-      }
+    for (const pos of positions) {
+      const tile = new Tile(tetromino.color, pos);
+      this.tiles[this.unsafeIndex(pos)] = tile;
+      this.active.add(tile);
     }
-    return canSpawn;
+    this.origin = transform(vec2(2, 1));
+    return true;
   }
 
   // Move active tiles
-  moveActive(offset: util.Vec2): boolean {
-    let canMove = true;
+  moveActive(offset: util.Vec2, rotation: util.Vec2): boolean {
+    if (this.shouldSpawn())
+      return false;
+
+    const transform = (pos: util.Vec2) => {
+      const centered = vec2(pos.x - this.origin!.x, pos.y - this.origin!.y);
+      return vec2(
+        centered.x * rotation.x - centered.y * rotation.y + offset.x + this.origin!.x,
+        centered.x * rotation.y + centered.y * rotation.x + offset.y + this.origin!.y
+      );
+    };
+
     for (const tile of this.active) {
       try {
-        const newPos = vec2(tile.pos.x + offset.x, tile.pos.y + offset.y);
+        const newPos = transform(tile.pos);
         const newTile = this.tiles[this.index(newPos)];
-        if (newTile != null && !this.active.has(newTile)) {
-          canMove = false;
-        }
+        if (!(newTile == null || this.active.has(newTile)))
+          return false;
       } catch {
-        canMove = false;
+        return false;
       }
     }
 
-    if (canMove) {
-      for (const tile of this.active) {
-        const index = this.unsafeIndex(tile.pos);
-        const newPos = vec2(tile.pos.x + offset.x, tile.pos.y + offset.y);
-        const newIndex = this.unsafeIndex(newPos);
-        this.tiles[newIndex] = this.tiles[index];
-        this.tiles[index] = null;
-        this.tiles[newIndex]!.pos = newPos;
-      }
+    for (const tile of this.active) {
+      const index = this.unsafeIndex(tile.pos);
+      tile.pos = transform(tile.pos);
+      const newIndex = this.unsafeIndex(tile.pos);
+      const temp = this.tiles[index];
+      this.tiles[index] = this.tiles[newIndex];
+      this.tiles[newIndex] = temp;
     }
-    return canMove;
+    this.origin = transform(this.origin!);
+    return true;
   }
 
   // Check if a tetromino should spawn
   shouldSpawn(): boolean {
-    return this.active.size == 0;
+    return this.origin == null;
   }
 
   // Clear tiles
@@ -214,5 +222,6 @@ export class Tiles {
   // Clear active tiles
   clearActive() {
     this.active.clear();
+    this.origin = undefined;
   }
 }
