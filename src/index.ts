@@ -37,6 +37,17 @@ function randomNextTetromino() {
 }
 randomNextTetromino();
 
+// Move active tiles with keyboard
+document.addEventListener("keydown", (event) => {
+  switch (event.code) {
+    case "KeyA":
+      board.moveActive(vec2(-1, 0));
+      break;
+    case "KeyD":
+      board.moveActive(vec2(1, 0));
+  }
+});
+
 // Game loop
 function gameLoop(time: number) {
   // Request a new frame before any errors
@@ -62,7 +73,7 @@ function gameLoop(time: number) {
       board.clear();
 
     // Apply gravity to active tiles
-    if (!board.moveActive(vec2(0, -1), vec2(1, 0)))
+    if (!board.moveActive(vec2(0, -1)))
       board.clearActive();
   }
 

@@ -110,7 +110,7 @@ export class Tiles {
   readonly size: util.Vec2;
   private tiles: Array<Tile | null>;
   private active: Set<Tile>;
-  private origin: util.Vec2 | undefined;
+  private origin?: util.Vec2;
 
   // Constructor
   constructor(size: util.Vec2) {
@@ -136,9 +136,10 @@ export class Tiles {
       const tiles = new Set<util.Vec2>;
       for (let x = 0; x < this.size.x; x++) {
         for (let y = 0; y < this.size.y; y++) {
-          const current = this.unsafeIndex(vec2(x, y));
+          const pos = vec2(x, y);
+          const current = this.unsafeIndex(pos);
           if (this.tiles[current] != null && this.tiles[current].color == color)
-            tiles.add(this.tiles[current].pos);
+            tiles.add(pos);
         }
       }
       yield { color: color, tiles: tiles };
@@ -173,9 +174,10 @@ export class Tiles {
   }
 
   // Move active tiles
-  moveActive(offset: util.Vec2, rotation: util.Vec2): boolean {
+  moveActive(offset: util.Vec2, rotation?: util.Vec2): boolean {
     if (this.shouldSpawn())
       return false;
+    rotation = rotation ? rotation : vec2(1, 0);
 
     const transform = (pos: util.Vec2) => {
       const centered = vec2(pos.x - this.origin!.x, pos.y - this.origin!.y);
@@ -197,13 +199,11 @@ export class Tiles {
     }
 
     for (const tile of this.active) {
-      const index = this.unsafeIndex(tile.pos);
+      this.tiles[this.unsafeIndex(tile.pos)] = null;
       tile.pos = transform(tile.pos);
-      const newIndex = this.unsafeIndex(tile.pos);
-      const temp = this.tiles[index];
-      this.tiles[index] = this.tiles[newIndex];
-      this.tiles[newIndex] = temp;
     }
+    for (const tile of this.active)
+      this.tiles[this.unsafeIndex(tile.pos)] = tile;
     this.origin = transform(this.origin!);
     return true;
   }
