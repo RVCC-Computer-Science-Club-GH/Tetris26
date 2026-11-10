@@ -12,7 +12,7 @@ const tileTexture = render.loadTexture(tileImage);
 
 // State
 const board = new tiles.Tiles(vec2(10, 20));
-const updateTimer = new util.Timer(0, 0.15, true);
+const updateTimer = new util.Timer(0, 0.2, true);
 let nextTetromino: tiles.Tetromino;
 let shouldStop = false;
 let timeStopped: number;
@@ -59,6 +59,10 @@ document.addEventListener("keydown", (event) => {
     case "KeyS":
     case "ArrowDown":
       board.moveActive(vec2(0, 0), vec2(0, 1));
+      break;
+    // Slam down
+    case "Space":
+      while (board.moveActive(vec2(0, -1)));
   }
 });
 
@@ -75,6 +79,10 @@ function gameLoop(time: number) {
 
   // Update loop
   while (updateTimer.tick(time)) {
+    // Apply gravity to active tiles
+    if (!board.moveActive(vec2(0, -1)))
+      board.clearActive();
+
     // Try to spawn a random tetromino if none active and select a random next
     // tetromino if one was spawned
     for (let i = 0; board.shouldSpawn() && i < 100; i++) {
@@ -85,10 +93,6 @@ function gameLoop(time: number) {
     // Clear board if no tetromino could be spawned
     if (board.shouldSpawn())
       board.clear();
-
-    // Apply gravity to active tiles
-    if (!board.moveActive(vec2(0, -1)))
-      board.clearActive();
   }
 
   // Clear screen
