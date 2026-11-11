@@ -14,9 +14,9 @@ const tileTexture = render.loadTexture(tileImage);
 const board = new tiles.Tiles(vec2(10, 20));
 const updateTimer = new util.Timer(0, 0.2, true);
 let nextTetromino: tiles.Tetromino;
-let shouldStop = false;
-let timeStopped: number;
-let timeOffset: number;
+let shouldStop = true;
+let timeStopped = 0;
+let timeOffset = 0;
 
 // Meshes
 const backgroundMesh = new render.SpriteMesh(util.worldSize);
@@ -66,15 +66,32 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
+// Pause game
+function pauseGame() {
+  if (!shouldStop) {
+    timeStopped = performance.now();
+    shouldStop = true;
+  }
+}
+
+// Resume game
+function resumeGame() {
+  if (shouldStop) {
+    timeOffset -= performance.now() - timeStopped;
+    shouldStop = false;
+    window.requestAnimationFrame(gameLoop);
+  }
+}
+
 // Game loop
 function gameLoop(time: number) {
   // Request a new frame before any errors
-  if (!shouldStop)
-    window.requestAnimationFrame(gameLoop);
+  if (shouldStop)
+    return;
   else
-    timeStopped = time;
+    window.requestAnimationFrame(gameLoop);
 
-  // Time in seconds
+  // Time in seconds with offset
   time = (time + timeOffset) / 1000;
 
   // Update loop
@@ -124,15 +141,13 @@ function gameLoop(time: number) {
 
 // Pause and unpause on visibility change
 document.addEventListener("visibilitychange", () => {
-  if (document.hidden) {
-    shouldStop = true;
-  } else if (shouldStop) {
-    shouldStop = false;
-    timeOffset -= performance.now() - timeStopped;
-    window.requestAnimationFrame(gameLoop);
-  }
+  if (document.hidden)
+    pauseGame();
+  else
+    resumeGame();
 });
+window.addEventListener("blur", pauseGame);
+window.addEventListener("focus", resumeGame);
 
 // Start game loop
-timeOffset = -performance.now();
-window.requestAnimationFrame(gameLoop);
+resumeGame();
