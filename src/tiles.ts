@@ -244,9 +244,11 @@ export class Tiles {
       this.tiles[i] = null;
   }
 
-  // Clear active tiles
-  clearActive() {
-    this.active.clear();
-    this.origin = undefined;
+  // Lock the active tiles in place
+  lockActive() {
+    if (this.origin != null) {
+      this.active.clear();
+      this.origin = undefined;
+    }
   }
 }

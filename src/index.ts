@@ -17,6 +17,7 @@ let nextTetromino: tiles.Tetromino;
 let shouldStop = true;
 let timeStopped = 0;
 let timeOffset = 0;
+let gracePeriod = 0;
 
 // Meshes
 const backgroundMesh = new render.SpriteMesh(util.worldSize);
@@ -63,6 +64,7 @@ document.addEventListener("keydown", (event) => {
     // Slam down
     case "Space":
       while (board.moveActive(vec2(0, -1)));
+      board.lockActive();
   }
 });
 
@@ -97,8 +99,15 @@ function gameLoop(time: number) {
   // Update loop
   while (updateTimer.tick(time)) {
     // Apply gravity to active tiles
-    if (!board.moveActive(vec2(0, -1)))
-      board.clearActive();
+    if (!board.moveActive(vec2(0, -1))) {
+      // Lock active tiles if can't fall after grace period
+      if (gracePeriod < 3) {
+        gracePeriod++;
+      } else {
+        board.lockActive();
+        gracePeriod = 0;
+      }
+    }
 
     // Try to spawn a random tetromino if none active and select a random next
     // tetromino if one was spawned
