@@ -125,12 +125,14 @@ export class Tiles {
   private tiles: Array<Tile | null>;
   private active: Set<Tile>;
   private origin?: util.Vec2;
+  private changedLines: Set<number>;
 
   // Constructor
   constructor(size: util.Vec2) {
     this.size = size;
     this.tiles = Array(size.x * size.y);
     this.active = new Set;
+    this.changedLines = new Set;
   }
 
   // Get index at position
@@ -239,16 +241,42 @@ export class Tiles {
   }
 
   // Clear tiles
-  clear() {
+  clearTiles() {
     for (const i in this.tiles)
       this.tiles[i] = null;
   }
 
-  // Lock the active tiles in place
+  // Lock the active tiles in place and mark changed lines
   lockActive() {
     if (this.origin != null) {
+      for (const tile of this.active)
+        this.changedLines.add(tile.pos.y);
       this.active.clear();
       this.origin = undefined;
+    }
+  }
+
+  // Clear any completed lines that have been added to the changed lines set
+  clearComplete() {
+    if (this.changedLines.size != 0) {
+      for (const line of this.changedLines) {
+        let complete = true;
+        for (let x = 0; x < this.size.x; x++) {
+          if (this.tiles[this.unsafeIndex(vec2(x, line))] == null)
+            complete = false;
+        }
+        if (complete) {
+          for (let x = 0; x < this.size.x; x++) {
+            for (let y = line + 1; y < this.size.y; y++) {
+              const current = this.unsafeIndex(vec2(x, y));
+              const below = this.unsafeIndex(vec2(x, y - 1));
+              this.tiles[below] = this.tiles[current];
+              this.tiles[current] = null;
+            }
+          }
+        }
+      }
+      this.changedLines.clear();
     }
   }
 }
