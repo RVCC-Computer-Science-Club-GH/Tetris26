@@ -125,16 +125,15 @@ function gameLoop(time: number) {
     // Clear any complete lines
     board.clearComplete();
 
-    // Try to spawn a random tetromino if none active and select a random next
-    // tetromino if one was spawned
-    for (let i = 0; board.shouldSpawn() && i < 100; i++) {
+    // Try to spawn a random tetromino
+    if (board.shouldSpawn()) {
+      // Select a random next tetromino if a tetromino was spawned and end game
+      // if none could be spawned
       if (board.spawnTetromino(nextTetromino))
         randomNextTetromino();
+      else
+        board.clearTiles();
     }
-
-    // Clear board if no tetromino could be spawned
-    if (board.shouldSpawn())
-      board.clearTiles();
   }
 
   // Clear screen

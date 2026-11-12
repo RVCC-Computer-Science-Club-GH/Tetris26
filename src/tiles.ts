@@ -165,9 +165,8 @@ export class Tiles {
   // Spawn a tetromino
   spawnTetromino(tetromino: Tetromino): boolean {
     // Transform
-    const x = Math.round(this.size.x * Math.random() - this.size.x / 2);
     const transform = (pos: util.Vec2) => vec2(
-      this.size.x / 2 + pos.x + x - 2,
+      this.size.x / 2 + pos.x - 2,
       this.size.y + pos.y - 2
     );
 
