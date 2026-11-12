@@ -261,7 +261,7 @@ export class Tiles {
     if (this.changedLines.size != 0) {
       for (const line of this.changedLines) {
         let complete = true;
-        for (let x = 0; x < this.size.x; x++) {
+        for (let x = 0; complete && x < this.size.x; x++) {
           if (this.tiles[this.unsafeIndex(vec2(x, line))] == null)
             complete = false;
         }
