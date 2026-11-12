@@ -38,6 +38,19 @@ function randomNextTetromino() {
 }
 randomNextTetromino();
 
+// Try rotations that kick off other tiles
+function tryRotations(rotation: util.Vec2) {
+  board.moveActive(vec2(0, 0), rotation) ||
+    board.moveActive(vec2(1, 0), rotation) ||
+    board.moveActive(vec2(-1, 0), rotation) ||
+    board.moveActive(vec2(0, 1), rotation) ||
+    board.moveActive(vec2(0, -1), rotation) ||
+    board.moveActive(vec2(2, 0), rotation) ||
+    board.moveActive(vec2(-2, 0), rotation) ||
+    board.moveActive(vec2(0, 2), rotation) ||
+    board.moveActive(vec2(0, -2), rotation);
+}
+
 // Move active tiles with keyboard
 document.addEventListener("keydown", (event) => {
   switch (event.code) {
@@ -54,12 +67,12 @@ document.addEventListener("keydown", (event) => {
     // Clockwise
     case "KeyW":
     case "ArrowUp":
-      board.moveActive(vec2(0, 0), vec2(0, -1));
+      tryRotations(vec2(0, -1));
       break;
     // Counterclockwise
     case "KeyS":
     case "ArrowDown":
-      board.moveActive(vec2(0, 0), vec2(0, 1));
+      tryRotations(vec2(0, 1));
       break;
     // Slam down
     case "Space":
