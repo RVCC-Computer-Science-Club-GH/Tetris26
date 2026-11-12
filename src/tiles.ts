@@ -199,7 +199,7 @@ export class Tiles {
     // Check if should spawn and default rotation
     if (this.shouldSpawn())
       return false;
-    rotation = rotation ? rotation : vec2(1, 0);
+    rotation = (rotation == null) ? vec2(1, 0) : rotation;
 
     // Transform
     const transform = (pos: util.Vec2) => {
@@ -259,20 +259,24 @@ export class Tiles {
   // Clear any completed lines that have been added to the changed lines set
   clearComplete() {
     if (this.changedLines.size != 0) {
-      for (const line of this.changedLines) {
+      const lines = [...this.changedLines].sort();
+      for (let i = 0; i < lines.length; i++) {
         let complete = true;
         for (let x = 0; complete && x < this.size.x; x++) {
-          if (this.tiles[this.unsafeIndex(vec2(x, line))] == null)
+          if (this.tiles[this.unsafeIndex(vec2(x, lines[i]))] == null)
             complete = false;
         }
         if (complete) {
           for (let x = 0; x < this.size.x; x++) {
-            for (let y = line + 1; y < this.size.y; y++) {
+            for (let y = lines[i] + 1; y < this.size.y; y++) {
               const current = this.unsafeIndex(vec2(x, y));
               const below = this.unsafeIndex(vec2(x, y - 1));
               this.tiles[below] = this.tiles[current];
               this.tiles[current] = null;
             }
+          }
+          for (let j = i + 1; j < lines.length; j++) {
+            lines[j]--;
           }
         }
       }
