@@ -113,8 +113,8 @@ function gameLoop(time: number) {
   while (updateTimer.tick(time)) {
     // Apply gravity to active tiles
     if (!board.moveActive(vec2(0, -1))) {
-      // Lock active tiles if can't fall after grace period
-      if (gracePeriod < 3) {
+      // Lock active tiles if can't fall after 4 "frame" grace period
+      if (gracePeriod < 4) {
         gracePeriod++;
       } else {
         board.lockActive();
