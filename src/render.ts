@@ -1,5 +1,6 @@
 // Imports
 import * as util from "./util";
+const vec2 = util.vec2;
 
 // Elements
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -133,14 +134,17 @@ export class TilesMesh extends Mesh {
   readonly size: util.Vec2;
 
   // Constructor
-  constructor(size: util.Vec2) {
+  constructor(size: util.Vec2, scale?: util.Vec2) {
+    // Default scale
+    scale = (scale == null) ? vec2(1, 1) : scale;
+
     // Generate vertices
     const vertices = [];
-    for (let y = -size.y / 2; y < size.y / 2; y++) {
-      for (let x = -size.x / 2; x < size.x / 2; x++) {
-        vertices.push(x + 1, y + 1, 1, 0);
-        vertices.push(x + 1, y, 1, 1);
-        vertices.push(x, y + 1, 0, 0);
+    for (let y = -size.y / 2; y < size.y / 2; y += scale.y) {
+      for (let x = -size.x / 2; x < size.x / 2; x += scale.x) {
+        vertices.push(x + scale.x, y + scale.y, 1, 0);
+        vertices.push(x + scale.x, y, 1, 1);
+        vertices.push(x, y + scale.y, 0, 0);
         vertices.push(x, y, 0, 1);
       }
     }
