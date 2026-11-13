@@ -40,6 +40,8 @@ let shouldStop = true;
 let timeStopped = 0;
 let timeOffset = 0;
 let gracePeriod = 0;
+let score = 4200;
+let level = 18;
 
 // Meshes
 const backgroundMesh = new render.SpriteMesh(util.worldSize);
@@ -64,7 +66,7 @@ const levelTranslate = vec2(
 // Select a random next tetromino
 function randomNextTetromino() {
   const keys = [...tiles.tetrominos.keys()];
-  const key = keys[Math.floor(keys.length * Math.random())];
+  const key = keys[Math.trunc(keys.length * Math.random())];
   nextTetromino = tiles.tetrominos.get(key)!;
   nextMesh.tiles = new Set(nextTetromino.tiles);
 }
@@ -177,31 +179,51 @@ function gameLoop(time: number) {
   render.setTexture(backgroundTexture);
   backgroundMesh.render();
 
-  // TODO Draw score
+  // Draw score
   render.setTranslate(scoreTranslate);
-  render.setTexture(numTextures[0]);
-  const scoreTiles: Set<util.Vec2> = new Set;
-  for (let i = 0; i < 8; i++)
-    scoreTiles.add(vec2(i, 0));
-  scoreMesh.tiles = scoreTiles;
-  scoreMesh.render();
+  const scoreDigits = [];
+  for (let i = 6; i > 0; i--)
+    scoreDigits.push(Math.trunc(score / 10 ** (i - 1)) % 10);
+  for (let n = 0; n < 10; n++) {
+    const scoreTiles: Set<util.Vec2> = new Set;
+    for (let i = 0; i < 6; i++) {
+      if (scoreDigits[i] == n)
+        scoreTiles.add(vec2(i, 0));
+    }
+    if (scoreTiles.size != 0) {
+      render.setTexture(numTextures[n]);
+      scoreMesh.tiles = scoreTiles;
+      scoreMesh.render();
+    }
+  }
 
-  // TODO Draw level
+  // Draw level
   render.setTranslate(levelTranslate);
-  render.setTexture(numTextures[0]);
-  const levelTiles: Set<util.Vec2> = new Set;
-  for (let i = 0; i < 3; i++)
-    levelTiles.add(vec2(i, 0));
-  levelMesh.tiles = levelTiles;
-  levelMesh.render();
+  const levelDigits = [];
+  for (let i = 2; i > 0; i--)
+    levelDigits.push(Math.trunc(level / 10 ** (i - 1)) % 10);
+  for (let n = 0; n < 10; n++) {
+    const levelTiles: Set<util.Vec2> = new Set;
+    for (let i = 0; i < 2; i++) {
+      if (levelDigits[i] == n)
+        levelTiles.add(vec2(i, 0));
+    }
+    if (levelTiles.size != 0) {
+      render.setTexture(numTextures[n]);
+      levelMesh.tiles = levelTiles;
+      levelMesh.render();
+    }
+  }
 
   // Draw tiles
   render.setTranslate(tilesTranslate);
   render.setTexture(tileTexture);
   for (const { color, tiles: colorTiles } of board.render()) {
-    render.setColor(color);
-    tilesMesh.tiles = colorTiles;
-    tilesMesh.render();
+    if (colorTiles.size != 0) {
+      render.setColor(color);
+      tilesMesh.tiles = colorTiles;
+      tilesMesh.render();
+    }
   }
 
   // Draw next tetromino

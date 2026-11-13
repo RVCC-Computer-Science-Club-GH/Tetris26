@@ -136,7 +136,7 @@ export class TilesMesh extends Mesh {
   // Constructor
   constructor(size: util.Vec2, scale?: util.Vec2) {
     // Default scale
-    scale = (scale == null) ? vec2(1, 1) : scale;
+    scale = scale == null ? vec2(1, 1) : scale;
 
     // Generate vertices
     const vertices = [];

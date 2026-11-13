@@ -198,7 +198,7 @@ export class Tiles {
     // Check if should spawn and default rotation
     if (this.shouldSpawn())
       return false;
-    rotation = (rotation == null) ? vec2(1, 0) : rotation;
+    rotation = rotation == null ? vec2(1, 0) : rotation;
 
     // Transform
     const transform = (pos: util.Vec2) => {
