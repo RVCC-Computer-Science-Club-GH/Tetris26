@@ -146,8 +146,8 @@ export class Tiles {
       return this.unsafeIndex(pos);
   }
 
-  // Yield every color and a set of positions for each tile of that color
-  *render(): Generator<{ color: util.Color, tiles: Set<util.Vec2> }> {
+  // Yield data for every draw call that should be done
+  *renderData(): Generator<{ color: util.Color, tiles: Set<util.Vec2> }> {
     for (const color of util.tileColors.values()) {
       const tiles = new Set<util.Vec2>;
       for (let x = 0; x < this.size.x; x++) {
@@ -158,7 +158,8 @@ export class Tiles {
             tiles.add(pos);
         }
       }
-      yield { color: color, tiles: tiles };
+      if (tiles.size != 0)
+        yield { color, tiles };
     }
   }
 

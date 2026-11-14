@@ -9,28 +9,6 @@ import backgroundImage from "./assets/background.webp";
 const backgroundTexture = render.loadTexture(backgroundImage);
 import tileImage from "./assets/tile.webp";
 const tileTexture = render.loadTexture(tileImage);
-import numImage0 from "./assets/0.webp";
-import numImage1 from "./assets/1.webp";
-import numImage2 from "./assets/2.webp";
-import numImage3 from "./assets/3.webp";
-import numImage4 from "./assets/4.webp";
-import numImage5 from "./assets/5.webp";
-import numImage6 from "./assets/6.webp";
-import numImage7 from "./assets/7.webp";
-import numImage8 from "./assets/8.webp";
-import numImage9 from "./assets/9.webp";
-const numTextures = [
-  render.loadTexture(numImage0),
-  render.loadTexture(numImage1),
-  render.loadTexture(numImage2),
-  render.loadTexture(numImage3),
-  render.loadTexture(numImage4),
-  render.loadTexture(numImage5),
-  render.loadTexture(numImage6),
-  render.loadTexture(numImage7),
-  render.loadTexture(numImage8),
-  render.loadTexture(numImage9)
-];
 
 // State
 const board = new tiles.Tiles(vec2(10, 20));
@@ -52,12 +30,12 @@ const nextTranslate = vec2(
   util.worldSize.x / 2 - 3,
   util.worldSize.y / 2 - 2,
 );
-const scoreMesh = new render.TilesMesh(vec2(3, 1), vec2(0.5, 1));
+const scoreMesh = new render.NumbersMesh(6);
 const scoreTranslate = vec2(
   util.worldSize.x / 2 - 3,
   util.worldSize.y / 2 - 4.5,
 );
-const levelMesh = new render.TilesMesh(vec2(1, 1), vec2(0.5, 1));
+const levelMesh = new render.NumbersMesh(2);
 const levelTranslate = vec2(
   util.worldSize.x / 2 - 3,
   util.worldSize.y / 2 - 6.5,
@@ -179,51 +157,19 @@ function gameLoop(time: number) {
   render.setTexture(backgroundTexture);
   backgroundMesh.render();
 
-  // Draw score
+  // Draw score and level
   render.setTranslate(scoreTranslate);
-  const scoreDigits = [];
-  for (let i = 6; i > 0; i--)
-    scoreDigits.push(Math.trunc(score / 10 ** (i - 1)) % 10);
-  for (let n = 0; n < 10; n++) {
-    const scoreTiles: Set<util.Vec2> = new Set;
-    for (let i = 0; i < 6; i++) {
-      if (scoreDigits[i] == n)
-        scoreTiles.add(vec2(i, 0));
-    }
-    if (scoreTiles.size != 0) {
-      render.setTexture(numTextures[n]);
-      scoreMesh.tiles = scoreTiles;
-      scoreMesh.render();
-    }
-  }
-
-  // Draw level
+  scoreMesh.renderNumber(score);
   render.setTranslate(levelTranslate);
-  const levelDigits = [];
-  for (let i = 2; i > 0; i--)
-    levelDigits.push(Math.trunc(level / 10 ** (i - 1)) % 10);
-  for (let n = 0; n < 10; n++) {
-    const levelTiles: Set<util.Vec2> = new Set;
-    for (let i = 0; i < 2; i++) {
-      if (levelDigits[i] == n)
-        levelTiles.add(vec2(i, 0));
-    }
-    if (levelTiles.size != 0) {
-      render.setTexture(numTextures[n]);
-      levelMesh.tiles = levelTiles;
-      levelMesh.render();
-    }
-  }
+  levelMesh.renderNumber(level);
 
   // Draw tiles
   render.setTranslate(tilesTranslate);
   render.setTexture(tileTexture);
-  for (const { color, tiles: colorTiles } of board.render()) {
-    if (colorTiles.size != 0) {
-      render.setColor(color);
-      tilesMesh.tiles = colorTiles;
-      tilesMesh.render();
-    }
+  for (const { color, tiles: colorTiles } of board.renderData()) {
+    render.setColor(color);
+    tilesMesh.tiles = colorTiles;
+    tilesMesh.render();
   }
 
   // Draw next tetromino

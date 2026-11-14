@@ -171,6 +171,61 @@ export class TilesMesh extends Mesh {
   }
 }
 
+// Number textures
+import numImage0 from "./assets/0.webp";
+import numImage1 from "./assets/1.webp";
+import numImage2 from "./assets/2.webp";
+import numImage3 from "./assets/3.webp";
+import numImage4 from "./assets/4.webp";
+import numImage5 from "./assets/5.webp";
+import numImage6 from "./assets/6.webp";
+import numImage7 from "./assets/7.webp";
+import numImage8 from "./assets/8.webp";
+import numImage9 from "./assets/9.webp";
+const numTextures = [
+  loadTexture(numImage0),
+  loadTexture(numImage1),
+  loadTexture(numImage2),
+  loadTexture(numImage3),
+  loadTexture(numImage4),
+  loadTexture(numImage5),
+  loadTexture(numImage6),
+  loadTexture(numImage7),
+  loadTexture(numImage8),
+  loadTexture(numImage9)
+];
+
+// Numbers mesh class
+export class NumbersMesh extends TilesMesh {
+  // Fields
+  private digitCount: number;
+
+  // Constructor
+  constructor(digitCount: number) {
+    super(vec2(digitCount / 2, 1), vec2(0.5, 1));
+    this.digitCount = digitCount;
+  }
+
+  // Render a number
+  renderNumber(number: number) {
+    const digits = Array(this.digitCount);
+    for (let i = 0; i < this.digitCount; i++)
+      digits[i] = Math.trunc(number / 10 ** (this.digitCount - i - 1)) % 10;
+    for (let n = 0; n < 10; n++) {
+      const tiles: Set<util.Vec2> = new Set;
+      for (let i = 0; i < this.digitCount; i++) {
+        if (digits[i] == n)
+          tiles.add(vec2(i, 0));
+      }
+      if (tiles.size != 0) {
+        setTexture(numTextures[n]);
+        this.tiles = tiles;
+        this.render();
+      }
+    }
+  }
+}
+
 // Clear the screen
 export function clearScreen() {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
