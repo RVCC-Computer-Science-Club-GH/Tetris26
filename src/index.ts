@@ -56,7 +56,7 @@ function randomNextTetromino() {
 }
 randomNextTetromino();
 
-// Try rotations that kick off other tiles
+// Try rotations that push off of walls and tiles
 function tryRotations(rotation: util.Vec2) {
   board.moveActive(vec2(0, 0), rotation) ||
     board.moveActive(vec2(1, 0), rotation) ||
