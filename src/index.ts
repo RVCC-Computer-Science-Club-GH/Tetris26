@@ -18,8 +18,9 @@ let shouldStop = true;
 let timeStopped = 0;
 let timeOffset = 0;
 let gracePeriod = 0;
-let score = 4200;
-let level = 18;
+let linesClearedTotal = 0;
+let score = 0;
+let level = 0;
 
 // Meshes
 const backgroundMesh = new render.SpriteMesh(util.worldSize);
@@ -30,7 +31,7 @@ const nextTranslate = vec2(
   util.worldSize.x / 2 - 3,
   util.worldSize.y / 2 - 2,
 );
-const scoreMesh = new render.NumbersMesh(6);
+const scoreMesh = new render.NumbersMesh(8);
 const scoreTranslate = vec2(
   util.worldSize.x / 2 - 3,
   util.worldSize.y / 2 - 4.5,
@@ -135,16 +136,39 @@ function gameLoop(time: number) {
     }
 
     // Clear any complete lines
-    board.clearComplete();
+    const linesCleared = board.clearComplete();
+    if (linesCleared != 0) {
+      linesClearedTotal += linesCleared;
+      level = Math.trunc(linesClearedTotal / 10);
+      let baseScore;
+      switch (linesCleared) {
+        case 1:
+          baseScore = 40;
+          break;
+        case 2:
+          baseScore = 100;
+          break;
+        case 3:
+          baseScore = 300;
+          break;
+        default:
+          baseScore = 1200;
+      }
+      score += baseScore * (level + 1);
+    }
 
-    // Try to spawn a random tetromino
+    // Try to spawn next tetromino
     if (board.shouldSpawn()) {
-      // Select a random next tetromino if a tetromino was spawned and end game
-      // if none could be spawned
-      if (board.spawnTetromino(nextTetromino))
-        randomNextTetromino();
-      else
+      // End game if none could spawn
+      if (!board.spawnTetromino(nextTetromino)) {
+        linesClearedTotal = 0;
+        level = 0;
+        score = 0;
         board.clearTiles();
+      }
+
+      // Select a random next tetromino
+      randomNextTetromino();
     }
   }
 

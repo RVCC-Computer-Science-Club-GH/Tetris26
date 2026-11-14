@@ -257,7 +257,8 @@ export class Tiles {
   }
 
   // Clear any completed lines that have been added to the changed lines set
-  clearComplete() {
+  clearComplete(): number {
+    let linesCleared = 0;
     if (this.changedLines.size != 0) {
       const lines = [...this.changedLines].sort();
       for (let i = 0; i < lines.length; i++) {
@@ -267,6 +268,7 @@ export class Tiles {
             complete = false;
         }
         if (complete) {
+          linesCleared++;
           for (let x = 0; x < this.size.x; x++) {
             for (let y = lines[i] + 1; y < this.size.y; y++) {
               const current = this.unsafeIndex(vec2(x, y));
@@ -275,12 +277,12 @@ export class Tiles {
               this.tiles[current] = null;
             }
           }
-          for (let j = i + 1; j < lines.length; j++) {
+          for (let j = i + 1; j < lines.length; j++)
             lines[j]--;
-          }
         }
       }
       this.changedLines.clear();
     }
+    return linesCleared;
   }
 }
