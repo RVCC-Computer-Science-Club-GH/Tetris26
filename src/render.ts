@@ -1,6 +1,6 @@
 // Imports
 import * as util from "./util";
-const vec2 = util.vec2;
+const { vec2 } = util;
 
 // Elements
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
