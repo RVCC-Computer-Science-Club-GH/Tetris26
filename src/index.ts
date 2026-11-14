@@ -11,8 +11,10 @@ import tileImage from "./assets/tile.webp";
 const tileTexture = render.loadTexture(tileImage);
 
 // State
-const board = new tiles.Tiles(vec2(10, 20));
-const updateTimer = new util.Timer(0, 0.2, true);
+const board = new tiles.Tiles(vec2(10, 30));
+const updateDelta = 0.2;
+const slamUpdateDelta = 0.05;
+const updateTimer = new util.Timer(0, updateDelta, true);
 let nextTetromino: tiles.Tetromino;
 let shouldStop = true;
 let timeStopped = 0;
@@ -21,6 +23,9 @@ let gracePeriod = 0;
 let linesClearedTotal = 0;
 let score = 0;
 let level = 0;
+
+// Calculate time
+const calcTime = (time: number) => (time + timeOffset) / 1000;
 
 // Meshes
 const backgroundMesh = new render.SpriteMesh(util.worldSize);
@@ -64,7 +69,7 @@ function tryRotations(rotation: util.Vec2) {
     board.moveActive(vec2(0, -2), rotation);
 }
 
-// Move active tiles with keyboard
+// Keydown
 document.addEventListener("keydown", (event) => {
   switch (event.code) {
     // Left
@@ -87,10 +92,18 @@ document.addEventListener("keydown", (event) => {
     case "ArrowDown":
       tryRotations(vec2(0, 1));
       break;
-    // Slam down
+    // Start slamming down
     case "Space":
-      while (board.moveActive(vec2(0, -1)));
-      board.lockActive();
+      updateTimer.duration = slamUpdateDelta;
+  }
+});
+
+// Keyup
+document.addEventListener("keyup", (event) => {
+  switch (event.code) {
+    // Stop slamming down
+    case "Space":
+      updateTimer.duration = updateDelta;
   }
 });
 
@@ -119,8 +132,8 @@ function gameLoop(time: number) {
   else
     window.requestAnimationFrame(gameLoop);
 
-  // Time in seconds with offset
-  time = (time + timeOffset) / 1000;
+  // Calculate time
+  time = calcTime(time);
 
   // Update loop
   while (updateTimer.tick(time)) {

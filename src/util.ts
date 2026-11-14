@@ -70,7 +70,7 @@ export function vec2(x: number, y: number): Vec2 {
 }
 
 // World size
-export const worldSize = vec2(17, 22);
+export const worldSize = vec2(17, 32);
 
 // Timer class
 export class Timer {
