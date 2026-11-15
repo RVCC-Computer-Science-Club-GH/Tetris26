@@ -94,7 +94,10 @@ document.addEventListener("keydown", (event) => {
       break;
     // Start slamming down
     case "Space":
-      updateTimer.duration = slamUpdateDelta;
+      if (!event.repeat) {
+        updateTimer.duration = slamUpdateDelta;
+        updateTimer.reset(calcTime(performance.now()));
+      }
   }
 });
 
@@ -103,7 +106,10 @@ document.addEventListener("keyup", (event) => {
   switch (event.code) {
     // Stop slamming down
     case "Space":
-      updateTimer.duration = updateDelta;
+      if (!event.repeat) {
+        updateTimer.duration = updateDelta;
+        updateTimer.reset(calcTime(performance.now()))
+      }
   }
 });
 
@@ -178,6 +184,7 @@ function gameLoop(time: number) {
         level = 0;
         score = 0;
         board.clearTiles();
+        pauseGame();
       }
 
       // Select a random next tetromino
@@ -227,6 +234,7 @@ document.addEventListener("visibilitychange", () => {
 });
 window.addEventListener("blur", pauseGame);
 window.addEventListener("focus", resumeGame);
+document.addEventListener("mousedown", resumeGame);
 
 // Start game loop
 resumeGame();
