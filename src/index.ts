@@ -30,20 +30,20 @@ const calcTime = (time: number) => (time + timeOffset) / 1000;
 // Meshes
 const backgroundMesh = new render.SpriteMesh(util.worldSize);
 const tilesMesh = new render.TilesMesh(board.size);
-const tilesTranslate = vec2(-util.worldSize.x / 2 + tilesMesh.size.x / 2 + 1, 0);
+const tilesTranslate = vec2(-util.worldSize.x / 2 + tilesMesh.size.x / 2 + 2, 0);
 const nextMesh = new render.TilesMesh(vec2(4, 2));
 const nextTranslate = vec2(
-  util.worldSize.x / 2 - 3,
+  util.worldSize.x / 2 - 4,
   util.worldSize.y / 2 - 2,
 );
 const scoreMesh = new render.NumbersMesh(8);
 const scoreTranslate = vec2(
-  util.worldSize.x / 2 - 3,
+  util.worldSize.x / 2 - 4,
   util.worldSize.y / 2 - 4.5,
 );
 const levelMesh = new render.NumbersMesh(2);
 const levelTranslate = vec2(
-  util.worldSize.x / 2 - 3,
+  util.worldSize.x / 2 - 4,
   util.worldSize.y / 2 - 6.5,
 );
 
