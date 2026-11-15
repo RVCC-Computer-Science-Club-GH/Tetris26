@@ -234,7 +234,7 @@ document.addEventListener("visibilitychange", () => {
 });
 window.addEventListener("blur", pauseGame);
 window.addEventListener("focus", resumeGame);
-document.addEventListener("mousedown", resumeGame);
+document.addEventListener("click", resumeGame);
 
 // Start game loop
 resumeGame();
