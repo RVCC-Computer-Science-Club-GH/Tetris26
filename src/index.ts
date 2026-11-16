@@ -4,28 +4,52 @@ import * as util from "./util";
 const { vec2 } = util;
 import * as tiles from "./tiles";
 
-// Textures
-import backgroundImage from "./assets/background.webp";
-const backgroundTexture = render.loadTexture(backgroundImage);
-import tileImage from "./assets/tile.webp";
-const tileTexture = render.loadTexture(tileImage);
-
 // State
 const board = new tiles.Tiles(vec2(10, 30));
 const updateDelta = 0.2;
 const slamUpdateDelta = 0.05;
 const updateTimer = new util.Timer(0, updateDelta, true);
 let nextTetromino: tiles.Tetromino;
-let shouldStop = true;
-let timeStopped = 0;
-let timeOffset = 0;
 let gracePeriod = 0;
 let linesClearedTotal = 0;
 let score = 0;
 let level = 0;
+let canRestart = false;
+
+// Time state
+let shouldPause = true;
+let timePaused = 0;
+let timeOffset = 0;
 
 // Calculate time
 const calcTime = (time: number) => (time + timeOffset) / 1000;
+
+// Pause game
+function pauseGame() {
+  if (!shouldPause) {
+    timePaused = performance.now();
+    shouldPause = true;
+  }
+}
+
+// Resume game
+function resumeGame() {
+  if (shouldPause) {
+    timeOffset -= performance.now() - timePaused;
+    shouldPause = false;
+    window.requestAnimationFrame(gameLoop);
+  }
+}
+
+// Pause and unpause on visibility change
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden)
+    pauseGame();
+  else
+    resumeGame();
+});
+window.addEventListener("blur", pauseGame);
+window.addEventListener("focus", resumeGame);
 
 // Meshes
 const backgroundMesh = new render.SpriteMesh(util.worldSize);
@@ -46,6 +70,12 @@ const levelTranslate = vec2(
   util.worldSize.x / 2 - 4,
   util.worldSize.y / 2 - 6.5,
 );
+
+// Textures
+import backgroundImage from "./assets/background.webp";
+const backgroundTexture = render.loadTexture(backgroundImage);
+import tileImage from "./assets/tile.webp";
+const tileTexture = render.loadTexture(tileImage);
 
 // Select a random next tetromino
 function randomNextTetromino() {
@@ -113,27 +143,24 @@ document.addEventListener("keyup", (event) => {
   }
 });
 
-// Pause game
-function pauseGame() {
-  if (!shouldStop) {
-    timeStopped = performance.now();
-    shouldStop = true;
+// Restart on click
+document.addEventListener("click", () => {
+  if (canRestart) {
+    linesClearedTotal = 0;
+    level = 0;
+    score = 0;
+    canRestart = false;
+    board.reset();
+    randomNextTetromino();
+    resumeGame();
+    updateTimer.reset(calcTime(performance.now()));
   }
-}
-
-// Resume game
-function resumeGame() {
-  if (shouldStop) {
-    timeOffset -= performance.now() - timeStopped;
-    shouldStop = false;
-    window.requestAnimationFrame(gameLoop);
-  }
-}
+});
 
 // Game loop
 function gameLoop(time: number) {
   // Request a new frame before any errors
-  if (shouldStop)
+  if (shouldPause)
     return;
   else
     window.requestAnimationFrame(gameLoop);
@@ -178,17 +205,14 @@ function gameLoop(time: number) {
 
     // Try to spawn next tetromino
     if (board.shouldSpawn()) {
-      // End game if none could spawn
-      if (!board.spawnTetromino(nextTetromino)) {
-        linesClearedTotal = 0;
-        level = 0;
-        score = 0;
-        board.clearTiles();
+      if (board.spawnTetromino(nextTetromino)) {
+        // Random next tetromino if could spawn
+        randomNextTetromino();
+      } else {
+        // Mark for restart and pause if not
+        canRestart = true;
         pauseGame();
       }
-
-      // Select a random next tetromino
-      randomNextTetromino();
     }
   }
 
@@ -224,17 +248,6 @@ function gameLoop(time: number) {
   render.setColor(nextTetromino.color);
   nextMesh.render();
 }
-
-// Pause and unpause on visibility change
-document.addEventListener("visibilitychange", () => {
-  if (document.hidden)
-    pauseGame();
-  else
-    resumeGame();
-});
-window.addEventListener("blur", pauseGame);
-window.addEventListener("focus", resumeGame);
-document.addEventListener("click", resumeGame);
 
 // Start game loop
 resumeGame();

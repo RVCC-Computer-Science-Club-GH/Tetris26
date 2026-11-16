@@ -240,10 +240,12 @@ export class Tiles {
     return this.origin == null;
   }
 
-  // Clear tiles
-  clearTiles() {
-    for (const i in this.tiles)
-      this.tiles[i] = null;
+  // Reset tiles
+  reset() {
+    this.tiles = Array(this.size.x * this.size.y);
+    this.active = new Set;
+    this.origin = undefined;
+    this.changedLines = new Set;
   }
 
   // Lock the active tiles in place and mark changed lines
