@@ -53,6 +53,7 @@ window.addEventListener("focus", resumeGame);
 
 // Meshes
 const backgroundMesh = new render.SpriteMesh(util.worldSize);
+const backgroundTranslate = vec2(0, 0);
 const tilesMesh = new render.TilesMesh(board.size);
 const tilesTranslate = vec2(-util.worldSize.x / 2 + tilesMesh.size.x / 2 + 2, 0);
 const nextMesh = new render.TilesMesh(vec2(4, 2));
@@ -70,12 +71,16 @@ const levelTranslate = vec2(
   util.worldSize.x / 2 - 4,
   util.worldSize.y / 2 - 6.5,
 );
+const gameOverMesh = new render.SpriteMesh(vec2(6, 3));
+const gameOverTranslate = vec2(-2.5, 0.5);
 
 // Textures
 import backgroundImage from "./assets/background.webp";
 const backgroundTexture = render.loadTexture(backgroundImage);
 import tileImage from "./assets/tile.webp";
 const tileTexture = render.loadTexture(tileImage);
+import gameOverImage from "./assets/game_over.webp";
+const gameOverTexture = render.loadTexture(gameOverImage);
 
 // Select a random next tetromino
 function randomNextTetromino() {
@@ -220,7 +225,7 @@ function gameLoop(time: number) {
   render.clearScreen();
 
   // Draw background
-  render.setTranslate(vec2(0, 0));
+  render.setTranslate(backgroundTranslate);
   render.setColor(util.colors.white);
   render.setTexture(backgroundTexture);
   backgroundMesh.render();
@@ -247,6 +252,14 @@ function gameLoop(time: number) {
   ));
   render.setColor(nextTetromino.color);
   nextMesh.render();
+
+  // Draw game over screen
+  if (canRestart) {
+    render.setTranslate(gameOverTranslate);
+    render.setColor(util.colors.white);
+    render.setTexture(gameOverTexture);
+    gameOverMesh.render();
+  }
 }
 
 // Start game loop
