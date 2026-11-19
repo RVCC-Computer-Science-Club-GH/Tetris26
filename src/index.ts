@@ -104,8 +104,27 @@ function tryRotations(rotation: util.Vec2) {
     board.moveActive(vec2(0, -2), rotation);
 }
 
+// Restart game
+function restartGame() {
+  if (canRestart) {
+    linesClearedTotal = 0;
+    level = 0;
+    score = 0;
+    canRestart = false;
+    board.reset();
+    randomNextTetromino();
+    resumeGame();
+    updateTimer.reset(calcTime(performance.now()));
+  }
+}
+
 // Keydown
 document.addEventListener("keydown", (event) => {
+  // Any key restarts
+  if (!event.repeat)
+    restartGame();
+
+  // Per key
   switch (event.code) {
     // Left
     case "KeyA":
@@ -149,18 +168,7 @@ document.addEventListener("keyup", (event) => {
 });
 
 // Restart on click
-document.addEventListener("click", () => {
-  if (canRestart) {
-    linesClearedTotal = 0;
-    level = 0;
-    score = 0;
-    canRestart = false;
-    board.reset();
-    randomNextTetromino();
-    resumeGame();
-    updateTimer.reset(calcTime(performance.now()));
-  }
-});
+document.addEventListener("click", restartGame);
 
 // Game loop
 function gameLoop(time: number) {
