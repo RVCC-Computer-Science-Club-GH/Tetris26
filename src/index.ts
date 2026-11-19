@@ -103,7 +103,6 @@ function randomNextTetromino() {
   nextTetromino = tiles.tetrominos.get(key)!;
   nextMesh.tiles = new Set(nextTetromino.tiles);
 }
-randomNextTetromino();
 
 // Try rotations that push off of walls and tiles
 function tryRotations(rotation: util.Vec2) {
