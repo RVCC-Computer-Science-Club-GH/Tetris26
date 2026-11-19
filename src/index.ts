@@ -50,7 +50,6 @@ function restartGame() {
     canRestart = false;
     board.reset();
     randomNextTetromino();
-    resumeGame();
     updateTimer.reset(calcTime(performance.now()));
   }
 }
@@ -221,9 +220,8 @@ function gameLoop(time: number) {
         // Random next tetromino if could spawn
         randomNextTetromino();
       } else {
-        // Mark for restart and pause if not
+        // Mark for restart if not
         canRestart = true;
-        pauseGame();
       }
     }
   }
@@ -270,4 +268,5 @@ function gameLoop(time: number) {
 }
 
 // Start game loop
+resumeGame();
 restartGame();
