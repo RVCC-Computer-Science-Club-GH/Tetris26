@@ -11,10 +11,10 @@ const slamUpdateDelta = 0.05;
 const updateTimer = new util.Timer(0, updateDelta, true);
 let nextTetromino: tiles.Tetromino;
 let gracePeriod = 0;
-let linesClearedTotal = 0;
-let score = 0;
-let level = 0;
-let canRestart = false;
+let linesClearedTotal: number;
+let score: number;
+let level: number;
+let canRestart = true;
 
 // Time state
 let shouldPause = true;
@@ -38,6 +38,20 @@ function resumeGame() {
     timeOffset -= performance.now() - timePaused;
     shouldPause = false;
     window.requestAnimationFrame(gameLoop);
+  }
+}
+
+// Restart game
+function restartGame() {
+  if (canRestart) {
+    linesClearedTotal = 0;
+    score = 0;
+    level = 0;
+    canRestart = false;
+    board.reset();
+    randomNextTetromino();
+    resumeGame();
+    updateTimer.reset(calcTime(performance.now()));
   }
 }
 
@@ -102,20 +116,6 @@ function tryRotations(rotation: util.Vec2) {
     board.moveActive(vec2(-2, 0), rotation) ||
     board.moveActive(vec2(0, 2), rotation) ||
     board.moveActive(vec2(0, -2), rotation);
-}
-
-// Restart game
-function restartGame() {
-  if (canRestart) {
-    linesClearedTotal = 0;
-    level = 0;
-    score = 0;
-    canRestart = false;
-    board.reset();
-    randomNextTetromino();
-    resumeGame();
-    updateTimer.reset(calcTime(performance.now()));
-  }
 }
 
 // Keydown
@@ -271,4 +271,4 @@ function gameLoop(time: number) {
 }
 
 // Start game loop
-resumeGame();
+restartGame();
