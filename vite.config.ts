@@ -10,7 +10,7 @@ import glslPlugin from "vite-plugin-glsl";
 export default vite.defineConfig(({ mode }) => {
   return {
     build: {
-      target: "es2015",
+      target: "es2022",
       reportCompressedSize: false
     },
     server: { port: 8000 },
