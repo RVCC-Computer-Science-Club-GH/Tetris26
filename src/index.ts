@@ -150,6 +150,15 @@ document.addEventListener("keydown", (event) => {
         updateTimer.duration = slamUpdateDelta;
         updateTimer.reset(calcTime(performance.now()));
       }
+      break;
+    // F to fullscreen
+    case "KeyF":
+      if (!event.repeat) {
+        if (document.fullscreenElement == null)
+          document.body.requestFullscreen();
+        else
+          document.exitFullscreen();
+      }
   }
 });
 
